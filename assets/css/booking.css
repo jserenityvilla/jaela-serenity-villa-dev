@@ -43,6 +43,33 @@ HEADER
     justify-content:space-between;
 
     align-items:center;
+    .booking-nav{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:25px;
+
+}
+
+.booking-nav a{
+
+    text-decoration:none;
+
+    color:#0c7775;
+
+    font-weight:600;
+
+    transition:.3s;
+
+}
+
+.booking-nav a:hover{
+
+    color:#095d5b;
+
+}
 
 }
 
@@ -218,6 +245,25 @@ MOBILE
 .form-grid{
 
     grid-template-columns:1fr;
+
+}
+.trust-bar{
+
+    flex-direction:column;
+
+    gap:15px;
+
+    text-align:center;
+
+}
+
+.booking-nav{
+
+    flex-direction:column;
+
+    gap:10px;
+
+    margin-top:15px;
 
 }
 
@@ -409,5 +455,32 @@ SUMMARY
     color:#0c7775;
 
     font-weight:bold;
+
+}
+/* ==========================
+TRUST BAR
+========================== */
+
+.trust-bar{
+
+    background:white;
+
+    display:flex;
+
+    justify-content:center;
+
+    gap:60px;
+
+    padding:20px;
+
+    box-shadow:0 3px 12px rgba(0,0,0,.05);
+
+}
+
+.trust-item{
+
+    font-weight:600;
+
+    color:#0c7775;
 
 }
