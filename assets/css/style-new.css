@@ -1102,3 +1102,28 @@ header{
     }
 
 }
+/* ==============================
+BOOK NOW BUTTON
+============================== */
+
+.book-btn{
+
+    background:#0c7775;
+
+    color:white !important;
+
+    padding:12px 24px;
+
+    border-radius:30px;
+
+    font-weight:600;
+
+    transition:.3s;
+
+}
+
+.book-btn:hover{
+
+    background:#095d5b;
+
+}
