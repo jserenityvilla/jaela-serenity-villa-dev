@@ -13,6 +13,7 @@
 <link rel="stylesheet" href="../assets/css/style-new.css">
 
 <link rel="stylesheet" href="../assets/css/booking.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
 </head>
 
@@ -187,12 +188,12 @@ MAIN
 
                 <select id="adults">
 
-                    <option>1</option>
-                    <option selected>2</option>
-                    <option>3</option>
-                    <option>4</option>
-                    <option>5</option>
-                    <option>6</option>
+                    <option value="1">1</option>
+                    <option value="2" selected>2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
 
                 </select>
 
@@ -204,10 +205,11 @@ MAIN
 
                 <select id="children">
 
-                    <option selected>0</option>
-                    <option>1</option>
-                    <option>2</option>
-                    <option>3</option>
+                    <option value="0" selected>0</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
 
                 </select>
 
@@ -230,7 +232,7 @@ MAIN
                 <label>Full Name</label>
 
                 <input type="text"
-                       id="fullname"
+                       id="guestName"
                        placeholder="John Smith"
                        required>
 
@@ -240,8 +242,8 @@ MAIN
 
                 <label>Email Address</label>
 
-                <input type="email"
-                       id="email"
+                <input type="text"
+                       id="guestEmail"
                        placeholder="example@email.com"
                        required>
 
@@ -252,7 +254,7 @@ MAIN
                 <label>Phone Number</label>
 
                 <input type="tel"
-                       id="phone"
+                       id="guestPhone"
                        placeholder="+61">
 
             </div>
@@ -262,7 +264,7 @@ MAIN
                 <label>Country</label>
 
                 <input type="text"
-                       id="country">
+                       id="guestCountry">
 
             </div>
 
@@ -281,7 +283,7 @@ MAIN
             <label>Estimated Arrival Time</label>
 
             <input type="time"
-                   id="arrival">
+                   id="arrivalTime">
 
         </div>
 
@@ -294,7 +296,7 @@ MAIN
         <h3>Special Requests</h3>
 
         <textarea
-            id="requests"
+            id="specialRequests"
             rows="5"
             placeholder="Airport pickup, late check-in, baby cot, etc."></textarea>
 
@@ -305,7 +307,7 @@ MAIN
         class="booking-button"
         type="submit">
 
-        Check Availability & Price
+        Reserve Your Stay
 
     </button>
         <p class="booking-note">
@@ -314,7 +316,7 @@ MAIN
 
         We'll confirm your booking within 24 hours.
 
-    </p>
+        </p>
     
 </form>
     </section>
@@ -328,9 +330,11 @@ MAIN
 
     <div class="summary-row">
 
-    <span>Accommodation</span>
+        <span>Accommodation</span>
 
-    <strong>
+        <strong id="summaryAccommodation">$0</strong>
+
+    </div>
 
         Ja-Ela Serenity Villa
 
@@ -342,7 +346,7 @@ MAIN
 
         <span>Guests</span>
 
-        <strong id="summaryGuests">2 Adults</strong>
+        <span id="summaryGuests">2 Adults</span>
 
     </div>
 
@@ -423,6 +427,36 @@ FOOTER
 
 </footer>
 
-</body>
+<!-- ==========================
+     JavaScript Libraries
+========================== -->
 
+<!-- Flatpickr -->
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js"></script>
+
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore-compat.js"></script>
+
+<!-- Firebase Configuration -->
+<script src="../firebase/firebase-config.js"></script>
+
+<!-- ==========================
+     Project JavaScript
+========================== -->
+
+<script src="../assets/js/pricing.js"></script>
+
+<script src="../assets/js/summary.js"></script>
+
+<script src="../assets/js/availability.js"></script>
+
+<script src="../assets/js/validation.js"></script>
+
+<script src="../assets/js/firebase.js"></script>
+
+<script src="../assets/js/booking.js"></script>
+
+</body>
 </html>
