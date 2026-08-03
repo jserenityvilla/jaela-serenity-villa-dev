@@ -90,7 +90,7 @@ HERO
 
 .booking-hero{
 
-    height:320px;
+    height:420px;
 
     background:url("../images/hero.jpg") center center/cover;
 
@@ -142,15 +142,19 @@ LAYOUT
 
     max-width:1400px;
 
-    margin:auto;
+    margin:-80px auto 60px;
+
+    position:relative;
+
+    z-index:5;
 
     display:grid;
 
     grid-template-columns:2fr 1fr;
 
-    gap:40px;
+    gap:35px;
 
-    padding:60px 40px;
+    padding:0 40px;
 
 }
 
@@ -162,11 +166,11 @@ LEFT
 
     background:white;
 
-    padding:40px;
+    padding:50px;
 
-    border-radius:18px;
+    border-radius:20px;
 
-    box-shadow:0 10px 25px rgba(0,0,0,.08);
+    box-shadow:0 15px 40px rgba(0,0,0,.10);
 
 }
 
@@ -178,15 +182,15 @@ RIGHT
 
     background:white;
 
-    padding:35px;
+    padding:45px;
 
-    border-radius:18px;
+    border-radius:20px;
 
-    box-shadow:0 10px 25px rgba(0,0,0,.08);
+    box-shadow:0 15px 40px rgba(0,0,0,.10);
 
     position:sticky;
 
-    top:100px;
+    top:120px;
 
 }
 
@@ -211,6 +215,11 @@ MOBILE
 ====================================== */
 
 @media(max-width:900px){
+.form-grid{
+
+    grid-template-columns:1fr;
+
+}
 
 .booking-main{
 
@@ -222,7 +231,11 @@ padding:25px;
 
 .booking-hero{
 
-height:250px;
+    height:420px;
+
+    background:url("../images/hero.jpg") center center/cover no-repeat;
+
+    position:relative;
 
 }
 
@@ -237,5 +250,164 @@ font-size:36px;
 font-size:20px;
 
 }
+
+}
+/* ======================================
+FORM
+====================================== */
+
+.form-section{
+
+    margin-bottom:40px;
+    padding-bottom:35px;
+    border-bottom:1px solid #ececec;
+
+}
+
+.form-section:last-child{
+
+    border-bottom:none;
+
+}
+
+.form-section h3{
+
+    color:#0c7775;
+
+    margin-bottom:20px;
+
+}
+
+.form-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(2,1fr);
+
+    gap:20px;
+
+}
+
+.form-group{
+
+    display:flex;
+
+    flex-direction:column;
+
+}
+
+.form-group label{
+
+    margin-bottom:8px;
+
+    font-weight:600;
+
+}
+
+.form-group input,
+.form-group select,
+textarea{
+
+    width:100%;
+
+    padding:15px;
+
+    border:1px solid #ddd;
+
+    border-radius:12px;
+
+    font-size:16px;
+
+    transition:.3s;
+
+    background:#fff;
+
+}
+
+.form-group input:focus,
+.form-group select:focus,
+textarea:focus{
+
+    border-color:#0c7775;
+
+    outline:none;
+
+    box-shadow:0 0 10px rgba(12,119,117,.20);
+
+}
+
+textarea{
+
+    padding:14px;
+
+    border:1px solid #ddd;
+
+    border-radius:10px;
+
+    font-size:16px;
+
+}
+
+textarea{
+
+    width:100%;
+
+    resize:vertical;
+
+}
+
+.booking-button{
+
+    width:100%;
+
+    padding:18px;
+
+    border:none;
+
+    border-radius:50px;
+
+    background:#0c7775;
+
+    color:white;
+
+    font-size:18px;
+
+    font-weight:600;
+
+    cursor:pointer;
+
+    transition:.3s;
+
+}
+
+.booking-button:hover{
+
+    background:#095d5b;
+
+    transform:translateY(-2px);
+
+}
+
+/* ======================================
+SUMMARY
+====================================== */
+
+.summary-row{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    margin:18px 0;
+
+}
+
+.summary-row.total{
+
+    font-size:20px;
+
+    color:#0c7775;
+
+    font-weight:bold;
 
 }
