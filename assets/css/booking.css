@@ -484,3 +484,50 @@ TRUST BAR
     color:#0c7775;
 
 }
+.booking-intro{
+
+    margin-bottom:35px;
+
+    color:#666;
+
+    font-size:17px;
+
+    line-height:1.7;
+
+}
+.booking-note{
+
+    text-align:center;
+
+    margin-top:20px;
+
+    color:#666;
+
+    font-size:15px;
+
+    line-height:1.6;
+
+}
+.booking-help{
+
+    margin-top:30px;
+
+    text-align:center;
+
+}
+
+.booking-help h3{
+
+    color:#0c7775;
+
+    margin-bottom:15px;
+
+}
+
+.booking-help p{
+
+    margin:10px 0;
+
+    color:#555;
+
+}
