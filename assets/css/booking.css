@@ -1,21 +1,241 @@
-body{
+/* ======================================
+GENERAL
+====================================== */
+
+*{
 
     margin:0;
+
+    padding:0;
+
+    box-sizing:border-box;
+
+}
+
+body{
 
     font-family:Poppins,sans-serif;
 
     background:#f7f8fa;
 
+    color:#333;
+
 }
 
-header{
+/* ======================================
+HEADER
+====================================== */
+
+.booking-header{
+
+    background:#ffffff;
+
+    padding:18px 8%;
+
+    box-shadow:0 2px 10px rgba(0,0,0,.08);
+
+}
+
+.booking-header .container{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+}
+
+.logo{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:15px;
+
+    text-decoration:none;
+
+    color:#0c7775;
+
+}
+
+.logo img{
+
+    width:60px;
+
+}
+
+.logo span{
+
+    font-size:26px;
+
+    font-weight:700;
+
+}
+
+.back-home{
+
+    color:#0c7775;
+
+    text-decoration:none;
+
+    font-weight:600;
+
+}
+
+/* ======================================
+HERO
+====================================== */
+
+.booking-hero{
+
+    height:320px;
+
+    background:url("../images/hero.jpg") center center/cover;
+
+    position:relative;
+
+}
+
+.booking-hero .overlay{
+
+    position:absolute;
+
+    inset:0;
+
+    background:rgba(0,0,0,.45);
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:center;
+
+    align-items:center;
+
+    color:white;
+
+    text-align:center;
+
+}
+
+.booking-hero h1{
+
+    font-size:52px;
+
+    margin-bottom:15px;
+
+}
+
+.booking-hero p{
+
+    font-size:20px;
+
+}
+
+/* ======================================
+LAYOUT
+====================================== */
+
+.booking-main{
+
+    max-width:1400px;
+
+    margin:auto;
+
+    display:grid;
+
+    grid-template-columns:2fr 1fr;
+
+    gap:40px;
+
+    padding:60px 40px;
+
+}
+
+/* ======================================
+LEFT
+====================================== */
+
+.booking-form{
+
+    background:white;
+
+    padding:40px;
+
+    border-radius:18px;
+
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+
+}
+
+/* ======================================
+RIGHT
+====================================== */
+
+.booking-summary{
+
+    background:white;
+
+    padding:35px;
+
+    border-radius:18px;
+
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+
+    position:sticky;
+
+    top:100px;
+
+}
+
+/* ======================================
+FOOTER
+====================================== */
+
+footer{
 
     background:#0c7775;
 
     color:white;
 
-    padding:70px 20px;
-
     text-align:center;
+
+    padding:25px;
+
+}
+
+/* ======================================
+MOBILE
+====================================== */
+
+@media(max-width:900px){
+
+.booking-main{
+
+grid-template-columns:1fr;
+
+padding:25px;
+
+}
+
+.booking-hero{
+
+height:250px;
+
+}
+
+.booking-hero h1{
+
+font-size:36px;
+
+}
+
+.logo span{
+
+font-size:20px;
+
+}
 
 }
