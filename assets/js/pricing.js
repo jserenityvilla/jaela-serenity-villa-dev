@@ -5,7 +5,7 @@ Ja-Ela Serenity Villa
 ====================================
 */
 
-const NIGHTLY_RATE = 120;
+const NIGHTLY_RATE = 50;
 
 /*
 ====================================
