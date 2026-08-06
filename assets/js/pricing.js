@@ -1,57 +1,26 @@
-/*
-====================================
-Pricing Engine
-Ja-Ela Serenity Villa
-====================================
-*/
+// ============================================
+// Pricing Engine
+// ============================================
 
-const NIGHTLY_RATE = 50;
+const NIGHTLY_RATE = CONFIG.pricing.nightlyRate;
 
-/*
-====================================
-Calculate Number of Nights
-====================================
-*/
-function calculateNights(checkin, checkout) {
+function calculatePrice(nights) {
 
-    if (!checkin || !checkout) {
-        return 0;
+    if (nights <= 0) {
+
+        document.getElementById("summaryAccommodation").textContent = "$0";
+        document.getElementById("summaryTotal").textContent = "Select your dates";
+
+        return;
+
     }
 
-    const start = new Date(checkin);
-    const end = new Date(checkout);
+    const total = nights * NIGHTLY_RATE;
 
-    const difference = end - start;
+    document.getElementById("summaryAccommodation").textContent =
+        "$" + total;
 
-    const nights = Math.ceil(difference / (1000 * 60 * 60 * 24));
-
-    return Math.max(nights, 0);
-
-}
-
-/*
-====================================
-Calculate Booking Price
-====================================
-*/
-function calculatePrice() {
-
-    const checkin = document.getElementById("checkin").value;
-    const checkout = document.getElementById("checkout").value;
-
-    const nights = calculateNights(checkin, checkout);
-
-    return nights * NIGHTLY_RATE;
-
-}
-
-/*
-====================================
-Format Price
-====================================
-*/
-function formatPrice(amount) {
-
-    return "$" + Number(amount).toLocaleString();
+    document.getElementById("summaryTotal").textContent =
+        "$" + total;
 
 }

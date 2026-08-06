@@ -1,23 +1,48 @@
-const checkIn = flatpickr("#checkin", {
-    dateFormat: "Y-m-d",
-    minDate: "today",
-    onChange: function(selectedDates) {
+// ============================================
+// Smart Calendar
+// Ja-Ela Serenity Villa
+// ============================================
 
-        if(selectedDates.length){
+let checkInPicker;
+let checkOutPicker;
+
+function initialiseCalendar() {
+
+    checkInPicker = flatpickr("#checkin", {
+
+        dateFormat: "Y-m-d",
+        altInput: true,
+        altFormat: "d M Y",
+        minDate: "today",
+
+        onChange: function (selectedDates) {
+
+            if (selectedDates.length === 0) return;
 
             const nextDay = new Date(selectedDates[0]);
-            nextDay.setDate(nextDay.getDate()+1);
+            nextDay.setDate(nextDay.getDate() + 1);
 
-            checkOut.set("minDate", nextDay);
+            checkOutPicker.set("minDate", nextDay);
 
             calculateStay();
+
         }
 
-    }
-});
+    });
 
-const checkOut = flatpickr("#checkout", {
-    dateFormat: "Y-m-d",
-    minDate: "today",
-    onChange: calculateStay
-});
+    checkOutPicker = flatpickr("#checkout", {
+
+        dateFormat: "Y-m-d",
+        altInput: true,
+        altFormat: "d M Y",
+        minDate: "today",
+
+        onChange: function () {
+
+            calculateStay();
+
+        }
+
+    });
+
+}

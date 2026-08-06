@@ -34,7 +34,7 @@ async function saveBooking(booking) {
         ====================================
         */
 
-        const docRef = await db.collection("bookings").add(booking);
+        const docRef = await db.collection(CONFIG.firestore.bookingsCollection).add(booking);
 
         console.log("Booking saved.");
 

@@ -32,25 +32,25 @@ function initialiseBookingPage() {
 // Initialise Flatpickr Calendar
 // ======================================================
 
-function initialiseCalendar() {
+//function initialiseCalendar() {
 
-    flatpickr("#checkin", {
-        minDate: "today",
-        dateFormat: "Y-m-d",
-        altInput: true,
-        altFormat: "d M Y"
-    });
+//    flatpickr("#checkin", {
+//        minDate: "today",
+//        dateFormat: "Y-m-d",
+//        altInput: true,
+//        altFormat: "d M Y"
+//    });
 
-    flatpickr("#checkout", {
-        minDate: "today",
-        dateFormat: "Y-m-d",
-        altInput: true,
-        altFormat: "d M Y"
-    });
+//    flatpickr("#checkout", {
+//        minDate: "today",
+//        dateFormat: "Y-m-d",
+//        altInput: true,
+//        altFormat: "d M Y"
+//    });
 
-    console.log("Calendar initialised.");
+//    console.log("Calendar initialised.");
 
-}
+//}
 
 // ======================================================
 // Detect Guest Country

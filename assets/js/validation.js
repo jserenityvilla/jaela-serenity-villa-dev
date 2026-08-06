@@ -111,7 +111,7 @@ function validateBooking(booking) {
 
         Number(booking.children);
 
-    if(guests>6){
+    if (guests > CONFIG.villa.maxGuests){
 
         showError("adults","Maximum occupancy is 6 guests.");
 
