@@ -1,39 +1,4 @@
-<!DOCTYPE html>
 
-<html lang="en">
-
-<head>
-
-<meta charset="UTF-8">
-
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Book Your Stay | Ja-Ela Serenity Villa</title>
-
-<link rel="stylesheet" href="../assets/css/style-new.css">
-
-<link rel="stylesheet" href="../assets/css/booking.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-
-</head>
-
-<body>
-
-<header>
-
-<p>
-
-Book directly with us for the best available rates, personalised service, and a relaxing stay at Ja-Ela Serenity Villa.
-
-</p>
-
-<p>Reserve your stay directly with Ja-Ela Serenity Villa.</p>
-
-</header>
-
-</body>
-
-</html>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -47,6 +12,9 @@ Book directly with us for the best available rates, personalised service, and a 
     <title>Book Your Stay | Ja-Ela Serenity Villa</title>
 
     <link rel="stylesheet" href="../assets/css/style-new.css">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
     <link rel="stylesheet" href="../assets/css/booking.css">
 
 </head>
@@ -79,7 +47,7 @@ HEADER
 
             </a>
 
-            <a href="https://wa.me/51979456">
+            <a href="tel:+61451979456">
 
                 💬 WhatsApp
 
@@ -175,12 +143,20 @@ MAIN
 
             <div class="form-group">
                 <label>Check-in</label>
-                <input type="date" id="checkin" required>
+                    <input
+                    type="text"
+                    id="checkin"
+                    placeholder="Select Check-in Date"
+                    required>
             </div>
 
             <div class="form-group">
                 <label>Check-out</label>
-                <input type="date" id="checkout" required>
+                <input
+                 type="text"
+                id="checkout"
+                placeholder="Select Check-out Date"
+                required>
             </div>
 
             <div class="form-group">
@@ -330,23 +306,29 @@ MAIN
 
     <div class="summary-row">
 
-        <span>Accommodation</span>
+    <span>Accommodation</span>
 
-        <strong id="summaryAccommodation">$0</strong>
+    <strong id="summaryAccommodation">$0</strong>
 
-    </div>
+</div>
 
-        Ja-Ela Serenity Villa
+<div class="summary-row">
 
-    </strong>
+    <span>Villa</span>
 
-    </div>
+    <span>Ja-Ela Serenity Villa</span>
+
+</div>
 
     <div class="summary-row">
 
         <span>Guests</span>
 
-        <span id="summaryGuests">2 Adults</span>
+        <span id="summaryGuests">
+
+2 Adults, 0 Children
+
+</span>
 
     </div>
 

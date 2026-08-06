@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Admin Dashboard | Ja-Ela Serenity Villa</title>
+
+    <link rel="stylesheet" href="../assets/css/style-new.css">
+
+    <link rel="stylesheet" href="../assets/css/admin.css">
+
+    <link rel="stylesheet" href="../assets/css/responsive.css">
+
+</head>
+
+<body>
+
+<header>
+
+    <h1>Ja-Ela Serenity Villa</h1>
+
+</header>
+
+<main class="admin-dashboard">
+
+    <section class="dashboard-header">
+
+        <h1>Booking Dashboard</h1>
+
+        <p>
+            Manage all Ja-Ela Serenity Villa bookings.
+        </p>
+
+    </section>
+
+    <section class="dashboard-stats">
+
+        <div class="stat-card">
+
+            <h3>Total Bookings</h3>
+
+            <span id="totalBookings">0</span>
+
+        </div>
+
+        <div class="stat-card">
+
+            <h3>Pending</h3>
+
+            <span id="pendingBookings">0</span>
+
+        </div>
+
+        <div class="stat-card">
+
+            <h3>Confirmed</h3>
+
+            <span id="confirmedBookings">0</span>
+
+        </div>
+
+        <div class="stat-card">
+
+            <h3>Total Revenue</h3>
+
+            <span id="totalRevenue">$0</span>
+
+        </div>
+
+    </section>
+
+    <section class="dashboard-search">
+
+        <input
+            type="text"
+            id="searchBookings"
+            placeholder="Search booking reference, guest name or email">
+
+    </section>
+
+    <section class="dashboard-table">
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>Reference</th>
+
+                    <th>Guest</th>
+
+                    <th>Check-in</th>
+
+                    <th>Nights</th>
+
+                    <th>Total</th>
+
+                    <th>Status</th>
+
+                    <th>Action</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody id="bookingTableBody">
+
+            </tbody>
+
+        </table>
+
+    </section>
+
+</main>
+
+<!-- Firebase -->
+
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js"></script>
+
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore-compat.js"></script>
+
+<script src="../firebase/firebase-config.js"></script>
+
+<!-- Admin Dashboard -->
+<script src="../assets/js/pricing.js"></script>
+<script src="../assets/js/admin.js"></script>
+
+<!-- =====================================
+Booking Details Modal
+===================================== -->
+
+<div id="bookingModal" class="modal">
+
+    <div class="modal-content">
+
+        <span class="close-modal" onclick="closeModal()">&times;</span>
+
+        <h2>Booking Details</h2>
+
+        <div id="bookingDetails">
+
+            <!-- Booking information appears here -->
+
+        </div>
+
+        <div class="modal-buttons">
+
+            <button id="confirmBookingBtn">
+                Confirm Booking
+            </button>
+
+            <button id="deleteBookingBtn">
+                Delete Booking
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+</body>
+</html>

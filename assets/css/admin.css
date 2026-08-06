@@ -1,0 +1,344 @@
+/*
+====================================
+JA-ELA SERENITY VILLA
+Admin Dashboard
+====================================
+*/
+
+body{
+
+    margin:0;
+    font-family:Arial,Helvetica,sans-serif;
+    background:#f5f7fb;
+
+}
+
+/* Header */
+
+header{
+
+    background:#0b7d7d;
+    color:white;
+
+    padding:20px 40px;
+
+}
+
+header h1{
+
+    margin:0;
+
+    font-size:28px;
+
+}
+
+/* Main */
+
+.admin-dashboard{
+
+    max-width:1400px;
+
+    margin:40px auto;
+
+    padding:0 30px;
+
+}
+
+/* Dashboard Title */
+
+.dashboard-header{
+
+    margin-bottom:30px;
+
+}
+
+.dashboard-header h1{
+
+    margin:0;
+
+    font-size:34px;
+
+    color:#222;
+
+}
+
+.dashboard-header p{
+
+    color:#666;
+
+}
+
+/* Statistics */
+
+.dashboard-stats{
+
+    display:grid;
+
+    grid-template-columns:repeat(4,1fr);
+
+    gap:25px;
+
+    margin-bottom:40px;
+
+}
+
+.stat-card{
+
+    background:white;
+
+    border-radius:12px;
+
+    padding:30px;
+
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+
+}
+
+.stat-card h3{
+
+    margin:0;
+
+    color:#555;
+
+    font-size:18px;
+
+}
+
+.stat-card span{
+
+    display:block;
+
+    margin-top:15px;
+
+    font-size:40px;
+
+    color:#0b7d7d;
+
+    font-weight:bold;
+
+}
+
+/* Search */
+
+.dashboard-search{
+
+    margin-bottom:30px;
+
+}
+
+.dashboard-search input{
+
+    width:100%;
+
+    padding:16px;
+
+    border-radius:8px;
+
+    border:1px solid #ddd;
+
+    font-size:16px;
+
+}
+
+/* Table */
+
+.dashboard-table{
+
+    background:white;
+
+    border-radius:12px;
+
+    overflow:hidden;
+
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+
+}
+
+table{
+
+    width:100%;
+
+    border-collapse:collapse;
+
+}
+
+thead{
+
+    background:#0b7d7d;
+
+    color:white;
+
+}
+
+th{
+
+    padding:18px;
+
+    text-align:left;
+
+}
+
+td{
+
+    padding:18px;
+
+    border-bottom:1px solid #eee;
+
+}
+
+tbody tr:hover{
+
+    background:#f7ffff;
+
+}
+
+/* Buttons */
+
+button{
+
+    background:#0b7d7d;
+
+    color:white;
+
+    border:none;
+
+    padding:10px 18px;
+
+    border-radius:6px;
+
+    cursor:pointer;
+
+}
+
+button:hover{
+
+    background:#095f5f;
+
+}
+
+/* Mobile */
+
+@media(max-width:900px){
+
+.dashboard-stats{
+
+grid-template-columns:1fr 1fr;
+
+}
+
+}
+
+@media(max-width:600px){
+
+.dashboard-stats{
+
+grid-template-columns:1fr;
+
+}
+
+table{
+
+display:block;
+
+overflow-x:auto;
+
+}
+
+}
+/* =====================================
+Booking Modal
+===================================== */
+
+.modal{
+
+    display:none;
+
+    position:fixed;
+
+    z-index:999;
+
+    left:0;
+
+    top:0;
+
+    width:100%;
+
+    height:100%;
+
+    background:rgba(0,0,0,.55);
+
+}
+
+.modal-content{
+
+    background:#fff;
+
+    width:650px;
+
+    max-width:90%;
+
+    margin:60px auto;
+
+    border-radius:12px;
+
+    padding:30px;
+
+    box-shadow:0 20px 60px rgba(0,0,0,.25);
+
+}
+
+.close-modal{
+
+    float:right;
+
+    font-size:30px;
+
+    cursor:pointer;
+
+}
+
+.modal h2{
+
+    margin-bottom:25px;
+
+}
+
+.modal-buttons{
+
+    display:flex;
+
+    gap:15px;
+
+    margin-top:30px;
+
+}
+
+.modal-buttons button{
+
+    flex:1;
+
+    padding:14px;
+
+    border:none;
+
+    border-radius:8px;
+
+    cursor:pointer;
+
+    color:white;
+
+    font-weight:bold;
+
+}
+
+#confirmBookingBtn{
+
+    background:#14866d;
+
+}
+
+#deleteBookingBtn{
+
+    background:#c0392b;
+
+}

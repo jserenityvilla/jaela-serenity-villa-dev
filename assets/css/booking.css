@@ -43,13 +43,34 @@ HEADER
     justify-content:space-between;
 
     align-items:center;
-    .booking-nav{
+
+}
+
+.booking-nav{
 
     display:flex;
 
     align-items:center;
 
     gap:25px;
+
+}
+
+.booking-nav a{
+
+    text-decoration:none;
+
+    color:#0c7775;
+
+    font-weight:600;
+
+    transition:.3s;
+
+}
+
+.booking-nav a:hover{
+
+    color:#095d5b;
 
 }
 
@@ -167,21 +188,21 @@ LAYOUT
 
 .booking-main{
 
-    max-width:1400px;
+    width:100%;
 
-    margin:-80px auto 60px;
+    max-width:1300px;
 
-    position:relative;
-
-    z-index:5;
+    margin:50px auto;
 
     display:grid;
 
     grid-template-columns:2fr 1fr;
 
-    gap:35px;
+    gap:40px;
 
-    padding:0 40px;
+    padding:0 20px;
+
+    align-items:start;
 
 }
 
@@ -209,7 +230,7 @@ RIGHT
 
     background:white;
 
-    padding:45px;
+    padding:35px;
 
     border-radius:20px;
 
@@ -217,7 +238,9 @@ RIGHT
 
     position:sticky;
 
-    top:120px;
+    top:30px;
+
+    height:fit-content;
 
 }
 
@@ -277,7 +300,8 @@ padding:25px;
 
 .booking-hero{
 
-    height:420px;
+    height:300px;
+    margin-bottom: 40px;
 
     background:url("../images/hero.jpg") center center/cover no-repeat;
 
