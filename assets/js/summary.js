@@ -37,3 +37,20 @@ function updateSummary() {
     }
 
 }
+function calculateStay(){
+
+    const checkInDate = document.getElementById("checkin").value;
+    const checkOutDate = document.getElementById("checkout").value;
+
+    if(!checkInDate || !checkOutDate)
+        return;
+
+    const start = new Date(checkInDate);
+    const end = new Date(checkOutDate);
+
+    const nights = Math.ceil(
+        (end-start)/(1000*60*60*24)
+    );
+
+    document.getElementById("summaryNights").textContent = nights;
+}
