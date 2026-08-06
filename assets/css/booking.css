@@ -555,3 +555,38 @@ TRUST BAR
     color:#555;
 
 }
+/*=========================================
+FORM VALIDATION
+=========================================*/
+
+.form-group {
+    position: relative;
+}
+
+.input-error {
+
+    border:2px solid #dc3545 !important;
+
+    background:#fff5f5;
+
+}
+
+.error-message{
+
+    color:#dc3545;
+
+    font-size:13px;
+
+    margin-top:6px;
+
+    display:block;
+
+    font-weight:500;
+
+}
+
+.input-success{
+
+    border:2px solid #198754 !important;
+
+}
