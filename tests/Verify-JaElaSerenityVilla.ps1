@@ -99,48 +99,48 @@ Write-Host ""
 # ---------------------------------------------------------------------------
 # 1. Homepage
 # ---------------------------------------------------------------------------
-$homeUrl = "$BaseUrl/"
-$home = Get-Page $homeUrl
+$homePageUrl = "$BaseUrl/"
+$homePage = Get-Page $homePageUrl
 
-Add-Result "PROD-01" "Homepage" "Homepage is reachable" ($null -ne $home) `
-    $(if ($home) { "HTTP $($home.StatusCode)" } else { "Unable to retrieve homepage" })
+Add-Result "PROD-01" "Homepage" "Homepage is reachable" ($null -ne $homePage) `
+    $(if ($homePage) { "HTTP $($homePage.StatusCode)" } else { "Unable to retrieve homepage" })
 
-if ($home) {
-    $homeHtml = $home.Content
+if ($homePage) {
+    $homePageHtml = $homePage.Content
 
     Add-Result "PROD-03" "Homepage" "Villa logo reference exists" `
-        ($homeHtml -match 'assets/images/logo\.png') "Expected logo asset reference"
+        ($homePageHtml -match 'assets/images/logo\.png') "Expected logo asset reference"
 
     Add-Result "PROD-04" "Homepage" "Villa name is present" `
-        ($homeHtml -match 'Ja-Ela Serenity Villa') "Expected villa name text"
+        ($homePageHtml -match 'Ja-Ela Serenity Villa') "Expected villa name text"
 
     Add-Result "PROD-05" "Homepage" "Hero section exists" `
-        ($homeHtml -match '<section[^>]+id=["'']welcome["''][^>]*class=["''][^"'']*hero') `
+        ($homePageHtml -match '<section[^>]+id=["'']welcome["''][^>]*class=["''][^"'']*hero') `
         "Expected #welcome hero section"
 
     Add-Result "PROD-06" "Homepage" "Hero text is present" `
-        ($homeHtml -match 'Your Peaceful Retreat Near') "Expected hero heading"
+        ($homePageHtml -match 'Your Peaceful Retreat Near') "Expected hero heading"
 
     Add-Result "PRE-01" "Gallery Preview" "Homepage gallery preview exists" `
-        ($homeHtml -match 'GALLERY PREVIEW|Villa Gallery') "Expected gallery preview heading"
+        ($homePageHtml -match 'GALLERY PREVIEW|Villa Gallery') "Expected gallery preview heading"
 
     Add-Result "PRE-04" "Gallery Preview" "View Gallery link exists" `
-        ($homeHtml -match 'pages/gallery\.html') "Expected link to pages/gallery.html"
+        ($homePageHtml -match 'pages/gallery\.html') "Expected link to pages/gallery.html"
 
     # Negative booking test: remove HTML comments before searching for Book Now.
-    $homeWithoutComments = [regex]::Replace($homeHtml, '<!--[\s\S]*?-->', '')
-    $bookNowActive = $homeWithoutComments -match 'Book\s*Now'
+    $homePageWithoutComments = [regex]::Replace($homePageHtml, '<!--[\s\S]*?-->', '')
+    $bookNowActive = $homePageWithoutComments -match 'Book\s*Now'
     Add-Result "BOOK-01" "Booking" "Book Now is not active in homepage HTML" `
         (-not $bookNowActive) "Book Now must remain hidden until booking is production-ready"
 
     Add-Result "FTR-01" "Footer" "Footer exists" `
-        ($homeHtml -match '<footer[^>]+class=["''][^"'']*site-footer') "Expected site footer"
+        ($homePageHtml -match '<footer[^>]+class=["''][^"'']*site-footer') "Expected site footer"
 
     Add-Result "FTR-05" "Footer" "Disclaimer heading exists" `
-        ($homeHtml -match 'Disclaimer') "Expected Disclaimer"
+        ($homePageHtml -match 'Disclaimer') "Expected Disclaimer"
 
     Add-Result "FTR-07" "Footer" "2026 copyright text exists" `
-        ($homeHtml -match '2026') "Expected 2026 copyright text"
+        ($homePageHtml -match '2026') "Expected 2026 copyright text"
 }
 
 # ---------------------------------------------------------------------------
@@ -167,7 +167,7 @@ if ($gallery) {
     $sections = @(
         @{ Id="exterior"; Label="Exterior"; TestId="GAL-03" },
         @{ Id="living-dining"; Label="Living/Dining"; TestId="GAL-04" },
-        @{ Id="dining"; Label="Dining"; TestId="GAL-05" },
+        @{ Id="living-dining"; Label="Dining/Living content"; TestId="GAL-05" },
         @{ Id="bedrooms"; Label="Bedrooms"; TestId="GAL-06" },
         @{ Id="kitchen"; Label="Kitchen"; TestId="GAL-07" },
         @{ Id="garden"; Label="Garden"; TestId="GAL-08" },
@@ -230,15 +230,15 @@ foreach ($asset in $requiredAssets) {
 # ---------------------------------------------------------------------------
 # 4. Internal link checks
 # ---------------------------------------------------------------------------
-if (-not $SkipLinkChecks -and $home) {
-    $linkMatches = [regex]::Matches($homeHtml, '<a[^>]+href=["'']([^"'']+)["'']', 'IgnoreCase')
+if (-not $SkipLinkChecks -and $homePage) {
+    $linkMatches = [regex]::Matches($homePageHtml, '<a[^>]+href=["'']([^"'']+)["'']', 'IgnoreCase')
     $internalUrls = New-Object System.Collections.Generic.List[string]
 
     foreach ($m in $linkMatches) {
         $href = $m.Groups[1].Value
         if ($href -match '^(#|mailto:|tel:|javascript:|https?://)') { continue }
 
-        $u = Resolve-Url $href $homeUrl
+        $u = Resolve-Url $href $homePageUrl
         if ($u -and $u.StartsWith($BaseUrl) -and -not $internalUrls.Contains($u)) {
             $internalUrls.Add($u)
         }
