@@ -1,0 +1,82 @@
+// =======================================================
+// Availability Functions
+// Ja-Ela Serenity Villa
+// DEV-011
+// =======================================================
+
+
+// =======================================================
+// Get Active Bookings
+// =======================================================
+
+async function getActiveBookings() {
+
+    try {
+
+        const snapshot =
+            await db
+                .collection(CONFIG.firestore.bookingsCollection)
+                .where("status", "in", [
+                    CONFIG.bookingStatus.pending,
+                    CONFIG.bookingStatus.confirmed
+                ])
+                .get();
+
+
+        const bookings = [];
+
+
+        snapshot.forEach(doc => {
+
+            const booking =
+                doc.data();
+
+
+            if (
+                booking.checkin &&
+                booking.checkout
+            ) {
+
+                bookings.push({
+
+                    id: doc.id,
+
+                    checkin:
+                        booking.checkin,
+
+                    checkout:
+                        booking.checkout,
+
+                    status:
+                        booking.status
+
+                });
+
+            }
+
+        });
+
+
+        console.log(
+            "Active bookings:",
+            bookings
+        );
+
+
+        return bookings;
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Unable to retrieve active bookings:",
+            error
+        );
+
+
+        return [];
+
+    }
+
+}

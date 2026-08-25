@@ -1,26 +1,91 @@
 // ============================================
 // Pricing Engine
+// Ja-Ela Serenity Villa
 // ============================================
-
-const NIGHTLY_RATE = CONFIG.pricing.nightlyRate;
 
 function calculatePrice(nights) {
 
+    const adults =
+        Number(document.getElementById("adults").value) || 0;
+
+    const children =
+        Number(document.getElementById("children").value) || 0;
+
+    const totalGuests = adults + children;
+
+    // ============================================
+    // No valid stay selected
+    // Reset all costs
+    // ============================================
+
     if (nights <= 0) {
 
-        document.getElementById("summaryAccommodation").textContent = "$0";
-        document.getElementById("summaryTotal").textContent = "Select your dates";
+        document.getElementById("summaryAccommodation").textContent =
+            "--";
+
+        document.getElementById("summaryExtraGuest").textContent =
+            "--";
+
+        document.getElementById("summaryCleaningFee").textContent =
+            "--";
+
+        document.getElementById("summaryTotal").textContent =
+            "Select your dates";
 
         return;
-
     }
 
-    const total = nights * NIGHTLY_RATE;
+    // ============================================
+    // Pricing Configuration
+    // ============================================
+
+    const nightlyRate =
+        CONFIG.pricing.nightlyRate;
+
+    const cleaningFee =
+        CONFIG.pricing.cleaningFee;
+
+    const extraGuestRate =
+        CONFIG.pricing.extraGuestRate;
+
+    // Villa rate includes up to 7 guests
+
+    const baseOccupancy = 7;
+
+    const extraGuests =
+        Math.max(0, totalGuests - baseOccupancy);
+
+    // ============================================
+    // Calculate Costs
+    // ============================================
+
+    const accommodationTotal =
+        nights * nightlyRate;
+
+    const extraGuestTotal =
+        extraGuests *
+        extraGuestRate *
+        nights;
+
+    const total =
+        accommodationTotal +
+        extraGuestTotal +
+        cleaningFee;
+
+    // ============================================
+    // Update Summary
+    // ============================================
 
     document.getElementById("summaryAccommodation").textContent =
-        "$" + total;
+        `AUD $${accommodationTotal.toFixed(2)}`;
+
+    document.getElementById("summaryExtraGuest").textContent =
+        `AUD $${extraGuestTotal.toFixed(2)}`;
+
+    document.getElementById("summaryCleaningFee").textContent =
+        `AUD $${cleaningFee.toFixed(2)}`;
 
     document.getElementById("summaryTotal").textContent =
-        "$" + total;
+        `AUD $${total.toFixed(2)}`;
 
 }

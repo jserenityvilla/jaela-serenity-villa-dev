@@ -15,7 +15,7 @@ const CONFIG = {
 
         address: "871 St Rita Avenue, Ja-Ela, Sri Lanka",
 
-        maxGuests: 6
+        maxGuests: 9
 
     },
 
@@ -27,11 +27,11 @@ const CONFIG = {
 
         currency: "AUD",
 
-        nightlyRate: 120,
+        nightlyRate: 60,
 
-        cleaningFee: 0,
+        cleaningFee: 6,
 
-        extraGuestRate: 0
+        extraGuestRate: 5.5
 
     },
 
