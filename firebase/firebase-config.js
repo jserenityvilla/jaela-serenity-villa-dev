@@ -1,10 +1,10 @@
 const firebaseConfig = {
-  apiKey: "AIzaSyCEgrfFn0zEw2dDwvPuTsYsT61p_SbGehs",
-  authDomain: "ja-ela-serenity-villa.firebaseapp.com",
-  projectId: "ja-ela-serenity-villa",
-  storageBucket: "ja-ela-serenity-villa.firebasestorage.app",
-  messagingSenderId: "353301654839",
-  appId: "1:353301654839:web:01fb5fc78ac1ced5fabeb2"
+  apiKey: "AIzaSyAQDpiDDv5mBsSlRmK4IfKV5gBriYt3xw",
+  authDomain: "ja-ela-serenity-villa-test.firebaseapp.com",
+  projectId: "ja-ela-serenity-villa-test",
+  storageBucket: "ja-ela-serenity-villa-test.firebasestorage.app",
+  messagingSenderId: "856400323421",
+  appId: "1:856400323421:web:6de6da50bcdda9af2dfeb4"
 };
 
 // Initialize Firebase
