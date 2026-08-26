@@ -267,6 +267,70 @@ async function saveBooking(booking) {
                 .add(bookingData);
 
 
+        // ==========================================
+        // Send Booking Confirmation Email
+        // ==========================================
+
+        try {
+
+            console.log(
+                "Sending booking confirmation email..."
+            );
+
+
+            const emailResponse =
+                await fetch(
+                    "https://sendbookingemail-v2cpuefneq-uc.a.run.app",
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body:
+                            JSON.stringify(
+                                bookingData
+                            )
+                    }
+                );
+
+
+            const emailResult =
+                await emailResponse.json();
+
+
+            if (!emailResponse.ok) {
+
+                console.error(
+                    "Booking email failed:",
+                    emailResult
+                );
+
+            } else {
+
+                console.log(
+                    "Booking confirmation email sent:",
+                    emailResult
+                );
+
+            }
+
+        } catch (emailError) {
+
+            console.error(
+                "Unable to send booking confirmation email:",
+                emailError
+            );
+
+        }
+
+
+        // ==========================================
+        // Booking Saved Successfully
+        // ==========================================
+
         console.log(
             "Booking saved successfully."
         );

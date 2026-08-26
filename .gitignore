@@ -1,2 +1,24 @@
+# Test results
 test-results/
+
+# VS Code
 .vscode/
+
+# Node.js dependencies
+node_modules/
+**/node_modules/
+
+# Firebase local files
+.firebase/
+
+# Environment / secret files
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
