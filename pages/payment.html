@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Pay Deposit | Ja-Ela Serenity Villa</title>
+
+    <link rel="stylesheet"
+          href="../assets/css/style.css">
+
+</head>
+
+<body>
+
+<header class="site-header">
+
+    <h1>Ja-Ela Serenity Villa</h1>
+
+</header>
+
+<main class="confirmation-page">
+
+    <div class="confirmation-card">
+
+        <div class="success-icon">
+            💳
+        </div>
+
+        <h2>Booking Deposit</h2>
+
+        <p>
+            Thank you for choosing
+            <strong>Ja-Ela Serenity Villa</strong>.
+        </p>
+
+        <div id="paymentDetails">
+
+            <p>
+                Loading your booking details...
+            </p>
+
+        </div>
+
+        <hr>
+
+        <div id="paymentMessage"></div>
+
+        <button
+            id="payDepositBtn"
+            class="btn-primary"
+            type="button"
+            disabled>
+
+            Loading...
+
+        </button>
+
+        <div class="confirmation-buttons">
+
+            <a href="../index.html"
+               class="btn-secondary">
+
+                Return Home
+
+            </a>
+
+        </div>
+
+    </div>
+
+</main>
+
+<!-- Firebase -->
+
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js"></script>
+
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore-compat.js"></script>
+
+<!-- Firebase Configuration -->
+
+<script src="../firebase/firebase-config.js"></script>
+
+<!-- Payment Logic -->
+
+<script src="../assets/js/payment.js"></script>
+
+</body>
+
+</html>
