@@ -1,2 +1,4 @@
 test-results/
 .vscode/
+node_modules/
+jaela-dev-current-changes-backup.patch

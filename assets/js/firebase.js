@@ -241,6 +241,41 @@ async function saveBooking(booking) {
             currency:
                 CONFIG.pricing.currency,
 
+            // Payment
+            depositPercentage:
+                Number(CONFIG.payment.depositPercentage) || 0,
+
+            depositAmount:
+                total *
+                (
+                    Number(CONFIG.payment.depositPercentage) || 0
+                ) /
+                100,
+
+            balanceAmount:
+                total -
+                (
+                    total *
+                    (
+                        Number(CONFIG.payment.depositPercentage) || 0
+                    ) /
+                    100
+                ),
+
+            balanceDueHoursBeforeCheckin:
+                Number(
+                    CONFIG.payment.balanceDueHoursBeforeCheckin
+                ) || 24,
+
+            balanceGracePeriodHours:
+                Number(
+                    CONFIG.payment.balanceGracePeriodHours
+                ) || 48,
+
+            paymentStatus:
+                "Deposit Required",
+
+
 
             // Booking management
             status:
