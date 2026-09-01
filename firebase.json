@@ -12,8 +12,12 @@
         "*.local"
       ]
     }
+<<<<<<< HEAD
   ],
   "firestore": {
     "rules": "firestore.rules"
   }
+=======
+  ]
+>>>>>>> 3e420e3 (Add Firebase deployment configuration)
 }
