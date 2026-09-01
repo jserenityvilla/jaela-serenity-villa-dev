@@ -1,10 +1,17 @@
 // ======================================================
 // Ja-Ela Serenity Villa
-// Stripe Deposit Payment
+// Stripe Deposit + Balance Payment
 // ======================================================
+
+// ------------------------------------------------------
+// Stripe Checkout Cloud Functions
+// ------------------------------------------------------
 
 const CREATE_DEPOSIT_CHECKOUT_URL =
     "https://us-central1-ja-ela-serenity-villa-test.cloudfunctions.net/createDepositCheckout";
+
+const CREATE_BALANCE_CHECKOUT_URL =
+    "https://us-central1-ja-ela-serenity-villa-test.cloudfunctions.net/createBalanceCheckout";
 
 
 // ======================================================
@@ -33,6 +40,14 @@ const payDepositBtn =
 
 
 // ======================================================
+// Current payment type
+// ======================================================
+
+let currentPaymentType =
+    null;
+
+
+// ======================================================
 // Load booking
 // ======================================================
 
@@ -56,7 +71,6 @@ async function loadBooking() {
         payDepositBtn.disabled = true;
 
         return;
-
     }
 
 
@@ -80,7 +94,6 @@ async function loadBooking() {
             payDepositBtn.disabled = true;
 
             return;
-
         }
 
 
@@ -96,6 +109,14 @@ async function loadBooking() {
             Number(booking.depositAmount) || 0;
 
 
+        const balance =
+            Number(booking.balanceAmount) ||
+            Math.max(
+                0,
+                total - deposit
+            );
+
+
         const currency =
             String(
                 booking.currency || "AUD"
@@ -105,6 +126,11 @@ async function loadBooking() {
         const paymentStatus =
             booking.paymentStatus ||
             "Deposit Required";
+
+
+        const balancePaymentStatus =
+            booking.balancePaymentStatus ||
+            "Balance Due";
 
 
         paymentDetails.innerHTML = `
@@ -142,6 +168,11 @@ async function loadBooking() {
             </p>
 
             <p>
+                <strong>Balance:</strong>
+                ${currency} ${balance.toFixed(2)}
+            </p>
+
+            <p>
                 <strong>Payment Status:</strong>
                 ${paymentStatus}
             </p>
@@ -149,38 +180,16 @@ async function loadBooking() {
         `;
 
 
-        // ------------------------------------------
-        // Already paid
-        // ------------------------------------------
-
-        if (
-            paymentStatus === "Deposit Paid" ||
-            paymentStatus === "Paid"
-        ) {
-
-            paymentMessage.innerHTML = `
-                <p>
-                    Your deposit has already been received.
-                </p>
-            `;
-
-            payDepositBtn.disabled = true;
-
-            payDepositBtn.textContent =
-                "Deposit Already Paid";
-
-            return;
-
-        }
-
-
-        // ------------------------------------------
+        // ==================================================
         // Booking must be confirmed
-        // ------------------------------------------
+        // ==================================================
 
         if (
             booking.status !== "Confirmed"
         ) {
+
+            currentPaymentType =
+                null;
 
             paymentMessage.innerHTML = `
                 <p>
@@ -189,24 +198,149 @@ async function loadBooking() {
                 </p>
             `;
 
-            payDepositBtn.disabled = true;
+            payDepositBtn.disabled =
+                true;
 
             payDepositBtn.textContent =
                 "Awaiting Booking Confirmation";
 
             return;
-
         }
 
 
-        // ------------------------------------------
-        // Ready for payment
-        // ------------------------------------------
+        // ==================================================
+        // FULLY PAID
+        // ==================================================
 
-        payDepositBtn.disabled = false;
+        if (
+            paymentStatus === "Paid" ||
+            balancePaymentStatus === "Paid" ||
+            booking.balancePaid === true
+        ) {
+
+            currentPaymentType =
+                null;
+
+            paymentMessage.innerHTML = `
+                <p>
+                    <strong>
+                        Your booking has been fully paid.
+                    </strong>
+                </p>
+            `;
+
+            payDepositBtn.disabled =
+                true;
+
+            payDepositBtn.textContent =
+                "Booking Fully Paid";
+
+            return;
+        }
+
+
+        // ==================================================
+        // DEPOSIT STILL REQUIRED
+        // ==================================================
+
+        if (
+            paymentStatus === "Deposit Required" ||
+            paymentStatus === "Deposit Checkout Created"
+        ) {
+
+            currentPaymentType =
+                "deposit";
+
+            paymentMessage.innerHTML = `
+                <p>
+                    Your booking deposit is required
+                    to secure the reservation.
+                </p>
+            `;
+
+            payDepositBtn.disabled =
+                false;
+
+            payDepositBtn.textContent =
+                `Pay ${currency} ${deposit.toFixed(2)} Deposit`;
+
+            return;
+        }
+
+
+        // ==================================================
+        // DEPOSIT PAID — BALANCE DUE
+        // ==================================================
+
+        if (
+            paymentStatus === "Deposit Paid" &&
+            balancePaymentStatus !== "Paid"
+        ) {
+
+            if (balance <= 0) {
+
+                currentPaymentType =
+                    null;
+
+                paymentMessage.innerHTML = `
+                    <p>
+                        No outstanding balance remains.
+                    </p>
+                `;
+
+                payDepositBtn.disabled =
+                    true;
+
+                payDepositBtn.textContent =
+                    "No Balance Due";
+
+                return;
+            }
+
+
+            currentPaymentType =
+                "balance";
+
+            paymentMessage.innerHTML = `
+                <p>
+                    Your deposit has been received.
+                </p>
+
+                <p>
+                    You may pay the remaining balance
+                    at any time.
+                </p>
+            `;
+
+            payDepositBtn.disabled =
+                false;
+
+            payDepositBtn.textContent =
+                `Pay ${currency} ${balance.toFixed(2)} Balance`;
+
+            return;
+        }
+
+
+        // ==================================================
+        // FALLBACK
+        // ==================================================
+
+        currentPaymentType =
+            null;
+
+        payDepositBtn.disabled =
+            true;
 
         payDepositBtn.textContent =
-            `Pay ${currency} ${deposit.toFixed(2)} Deposit`;
+            "Payment Unavailable";
+
+        paymentMessage.innerHTML = `
+            <p>
+                Payment is currently unavailable
+                for this booking.
+            </p>
+        `;
 
     }
 
@@ -224,7 +358,15 @@ async function loadBooking() {
             </p>
         `;
 
-        payDepositBtn.disabled = true;
+        paymentMessage.innerHTML = `
+            <p>
+                Please try again or contact us
+                for assistance.
+            </p>
+        `;
+
+        payDepositBtn.disabled =
+            true;
 
     }
 
@@ -235,16 +377,19 @@ async function loadBooking() {
 // Start Stripe Checkout
 // ======================================================
 
-async function startDepositPayment() {
+async function startPayment() {
 
-    if (!bookingId) {
+    if (
+        !bookingId ||
+        !currentPaymentType
+    ) {
 
         return;
-
     }
 
 
-    payDepositBtn.disabled = true;
+    payDepositBtn.disabled =
+        true;
 
     payDepositBtn.textContent =
         "Connecting to Stripe...";
@@ -252,16 +397,23 @@ async function startDepositPayment() {
 
     paymentMessage.innerHTML = `
         <p>
-            Please wait while we prepare your secure payment.
+            Please wait while we prepare
+            your secure payment.
         </p>
     `;
+
+
+    const checkoutUrl =
+        currentPaymentType === "balance"
+            ? CREATE_BALANCE_CHECKOUT_URL
+            : CREATE_DEPOSIT_CHECKOUT_URL;
 
 
     try {
 
         const response =
             await fetch(
-                CREATE_DEPOSIT_CHECKOUT_URL,
+                checkoutUrl,
                 {
                     method: "POST",
 
@@ -298,7 +450,6 @@ async function startDepositPayment() {
                 result.error ||
                 "Unable to create payment session."
             );
-
         }
 
 
@@ -309,7 +460,6 @@ async function startDepositPayment() {
             throw new Error(
                 "Stripe checkout URL was not returned."
             );
-
         }
 
 
@@ -334,16 +484,28 @@ async function startDepositPayment() {
             </p>
 
             <p>
-                Please try again or contact us
-                for assistance.
+                ${error.message || "Please try again."}
             </p>
         `;
 
 
-        payDepositBtn.disabled = false;
+        payDepositBtn.disabled =
+            false;
 
-        payDepositBtn.textContent =
-            "Try Again";
+
+        if (
+            currentPaymentType === "balance"
+        ) {
+
+            payDepositBtn.textContent =
+                "Try Balance Payment Again";
+
+        } else {
+
+            payDepositBtn.textContent =
+                "Try Deposit Payment Again";
+
+        }
 
     }
 
@@ -358,7 +520,7 @@ if (payDepositBtn) {
 
     payDepositBtn.addEventListener(
         "click",
-        startDepositPayment
+        startPayment
     );
 
 }
