@@ -957,44 +957,7 @@ async function confirmBooking() {
 
     try {
 
-        // ==========================================
-        // Verify Payment Before Confirmation
-        // ==========================================
 
-        const bookingDoc =
-            await db
-                .collection("bookings")
-                .doc(id)
-                .get();
-
-
-        if (!bookingDoc.exists) {
-
-            alert(
-                "Booking could not be found."
-            );
-
-            return;
-
-        }
-
-
-        const bookingData =
-            bookingDoc.data();
-
-
-        if (
-            bookingData.paymentStatus !==
-            "Paid"
-        ) {
-
-            alert(
-                "This booking cannot be confirmed until 100% payment has been received."
-            );
-
-            return;
-
-        }
 
 
         await db

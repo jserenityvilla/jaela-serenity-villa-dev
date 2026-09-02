@@ -330,11 +330,15 @@ async function saveBooking(booking) {
 
 
         // ==========================================
-        // Go to Confirmation Page
+        // ==========================================
+
+        // ==========================================
+        // Go to Deposit Payment Page
         // ==========================================
 
         window.location.href =
-            "confirmation.html";
+            "payment.html?bookingId=" +
+            encodeURIComponent(docRef.id);
 
 
         return true;

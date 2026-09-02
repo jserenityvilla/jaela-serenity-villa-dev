@@ -488,27 +488,42 @@ exports.createDepositCheckout = onRequest(
         }
 
         const booking =
-        bookingSnapshot.data();
+          bookingSnapshot.data();
 
-        if (booking.status !== "Confirmed") {
+        if (
+          booking.status !== "Pending" &&
+          booking.status !== "Confirmed"
+        ) {
           return res.status(400).json({
-            error: "Only confirmed bookings can request payment.",
+            error:
+              "Only pending or confirmed bookings can request payment.",
           });
         }
 
         const total =
-        Number(booking.total) || 0;
+          Number(booking.total) || 0;
 
         const depositPercentage =
-        Number(booking.depositPercentage) || 30;
+          Number(booking.depositPercentage);
+
+        if (
+          !Number.isFinite(depositPercentage) ||
+          depositPercentage <= 0 ||
+          depositPercentage >= 100
+        ) {
+          return res.status(500).json({
+            error:
+              "Invalid deposit percentage configuration.",
+          });
+        }
 
         const depositAmount =
-        Number(booking.depositAmount) ||
-        (
-          total *
-          depositPercentage /
-          100
-        );
+          Number(booking.depositAmount) ||
+          (
+            total *
+            depositPercentage /
+            100
+          );
 
         if (depositAmount <= 0) {
           return res.status(400).json({
@@ -914,12 +929,12 @@ exports.stripeWebhook = onRequest(
 
           if (paymentType === "deposit") {
             const total =
-            Number(booking.total) || 0;
+                Number(booking.total) || 0;
 
             const depositPercentage =
-            Number(
-                booking.depositPercentage,
-            ) || 30;
+                Number(
+                    booking.depositPercentage,
+                );
 
             const depositAmount =
             Number(
@@ -937,6 +952,9 @@ exports.stripeWebhook = onRequest(
 
 
             await bookingRef.update({
+
+              status:
+              "Confirmed",
 
               paymentStatus:
               "Deposit Paid",
