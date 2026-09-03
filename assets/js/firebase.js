@@ -241,6 +241,41 @@ async function saveBooking(booking) {
             currency:
                 CONFIG.pricing.currency,
 
+            // Payment
+            depositPercentage:
+                Number(CONFIG.payment.depositPercentage) || 0,
+
+            depositAmount:
+                total *
+                (
+                    Number(CONFIG.payment.depositPercentage) || 0
+                ) /
+                100,
+
+            balanceAmount:
+                total -
+                (
+                    total *
+                    (
+                        Number(CONFIG.payment.depositPercentage) || 0
+                    ) /
+                    100
+                ),
+
+            balanceDueHoursBeforeCheckin:
+                Number(
+                    CONFIG.payment.balanceDueHoursBeforeCheckin
+                ) || 24,
+
+            balanceGracePeriodHours:
+                Number(
+                    CONFIG.payment.balanceGracePeriodHours
+                ) || 48,
+
+            paymentStatus:
+                "Deposit Required",
+
+
 
             // Booking management
             status:
@@ -266,26 +301,6 @@ async function saveBooking(booking) {
                 )
                 .add(bookingData);
 
-
-        // ==========================================
-        // Booking Saved Successfully
-        // ==========================================
-        //
-        // IMPORTANT:
-        //
-        // The booking is now safely stored in Firestore.
-        // The confirmation page must NOT depend on the
-        // booking email service responding.
-        //
-        // Therefore:
-        //
-        // 1. Store the booking reference.
-        // 2. Navigate to confirmation.html.
-        // 3. Start the email request without awaiting it.
-        //
-        // This prevents a slow email service from blocking
-        // the guest's booking confirmation.
-        // ==========================================
 
         console.log(
             "Booking saved successfully."
@@ -315,96 +330,15 @@ async function saveBooking(booking) {
 
 
         // ==========================================
-        // Send Booking Confirmation Email
-        // ==========================================
-        //
-        // IMPORTANT:
-        //
-        // Do NOT await this request.
-        //
-        // The booking has already been saved successfully
-        // to Firestore and the reference has already been
-        // stored in sessionStorage.
-        //
-        // A problem with the email service must not prevent
-        // the guest from reaching the confirmation page.
         // ==========================================
 
-        console.log(
-            "Starting booking confirmation email..."
-        );
-
-
-        fetch(
-            "https://sendbookingemail-v2cpuefneq-uc.a.run.app",
-            {
-                method: "POST",
-
-                headers: {
-                    "Content-Type":
-                        "application/json"
-                },
-
-                body:
-                    JSON.stringify(
-                        bookingData
-                    )
-            }
-        )
-            .then(
-                async emailResponse => {
-
-                    try {
-
-                        const emailResult =
-                            await emailResponse.json();
-
-
-                        if (!emailResponse.ok) {
-
-                            console.error(
-                                "Booking email failed:",
-                                emailResult
-                            );
-
-                        } else {
-
-                            console.log(
-                                "Booking confirmation email sent:",
-                                emailResult
-                            );
-
-                        }
-
-                    } catch (emailParseError) {
-
-                        console.error(
-                            "Unable to process booking email response:",
-                            emailParseError
-                        );
-
-                    }
-
-                }
-            )
-            .catch(
-                emailError => {
-
-                    console.error(
-                        "Unable to send booking confirmation email:",
-                        emailError
-                    );
-
-                }
-            );
-
-
         // ==========================================
-        // Go to Confirmation Page
+        // Go to Deposit Payment Page
         // ==========================================
 
         window.location.href =
-            "confirmation.html";
+            "payment.html?bookingId=" +
+            encodeURIComponent(docRef.id);
 
 
         return true;

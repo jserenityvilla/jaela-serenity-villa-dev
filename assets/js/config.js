@@ -36,6 +36,22 @@ const CONFIG = {
     },
 
     // =====================================
+    // Payment
+    // =====================================
+
+    payment: {
+
+        depositPercentage: 30,
+
+        balanceDueHoursBeforeCheckin: 168,
+
+	    balanceGracePeriodHours: 48,
+
+        cancellationFeePercentage: 30
+
+    },
+
+    // =====================================
     // Firestore
     // =====================================
 

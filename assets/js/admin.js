@@ -957,6 +957,9 @@ async function confirmBooking() {
 
     try {
 
+
+
+
         await db
             .collection("bookings")
             .doc(id)
