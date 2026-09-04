@@ -12,6 +12,15 @@ function calculatePrice(nights) {
         Number(document.getElementById("children").value) || 0;
 
     const totalGuests = adults + children;
+    const summaryGuests =
+        document.getElementById("summaryGuests");
+
+    if (summaryGuests) {
+
+        summaryGuests.textContent =
+            `${adults} Adults, ${children} Children`;
+
+        }
 
     // ============================================
     // No valid stay selected
