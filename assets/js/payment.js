@@ -524,10 +524,51 @@ if (payDepositBtn) {
     );
 
 }
+// ======================================================
+// Stripe payment return status
+// ======================================================
+
+async function handlePaymentReturn() {
+
+    await loadBooking();
+
+    const paymentResult =
+        params.get("payment");
+
+    if (paymentResult === "success") {
+
+        paymentMessage.innerHTML = `
+            <p>
+                <strong>Payment submitted successfully.</strong>
+            </p>
+
+            <p>
+                We are confirming your payment. Your booking
+                status will be updated once Stripe confirms
+                the payment.
+            </p>
+        `;
+
+    } else if (paymentResult === "cancelled") {
+
+        paymentMessage.innerHTML = `
+            <p>
+                <strong>Payment was cancelled.</strong>
+            </p>
+
+            <p>
+                No payment was completed. You can try again
+                when you are ready.
+            </p>
+        `;
+
+    }
+
+}
 
 
 // ======================================================
 // Initial load
 // ======================================================
 
-loadBooking();
+handlePaymentReturn();
