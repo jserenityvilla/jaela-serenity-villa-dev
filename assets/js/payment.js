@@ -438,6 +438,7 @@ async function startPayment() {
             );
 
 
+
         const result =
             await response.json();
 
@@ -537,17 +538,48 @@ async function handlePaymentReturn() {
 
     if (paymentResult === "success") {
 
-        paymentMessage.innerHTML = `
-            <p>
-                <strong>Payment submitted successfully.</strong>
-            </p>
+        if (booking.paymentStatus === "Paid") {
 
-            <p>
-                We are confirming your payment. Your booking
-                status will be updated once Stripe confirms
-                the payment.
-            </p>
-        `;
+    paymentMessage.innerHTML = `
+        <p>
+            <strong>Payment completed successfully!</strong>
+        </p>
+
+        <p>
+            Your booking is fully paid and confirmed.
+            We look forward to welcoming you to
+            Ja-Ela Serenity Villa.
+        </p>
+    `;
+
+} else if (booking.paymentStatus === "Deposit Paid") {
+
+    paymentMessage.innerHTML = `
+        <p>
+            <strong>Deposit received successfully!</strong>
+        </p>
+
+        <p>
+            Your booking has been confirmed.
+            The remaining balance is still due.
+        </p>
+    `;
+
+} else {
+
+    paymentMessage.innerHTML = `
+        <p>
+            <strong>Payment submitted successfully.</strong>
+        </p>
+
+        <p>
+            We are confirming your payment. Your booking
+            status will be updated once Stripe confirms
+            the payment.
+        </p>
+    `;
+
+}
 
     } else if (paymentResult === "cancelled") {
 
