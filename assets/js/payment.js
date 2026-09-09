@@ -46,6 +46,9 @@ const payDepositBtn =
 let currentPaymentType =
     null;
 
+let currentBooking =
+    null;
+
 
 // ======================================================
 // Load booking
@@ -99,6 +102,9 @@ async function loadBooking() {
 
         const booking =
             bookingDoc.data();
+
+        currentBooking =
+            booking;
 
 
         const total =
@@ -538,7 +544,7 @@ async function handlePaymentReturn() {
 
     if (paymentResult === "success") {
 
-        if (booking.paymentStatus === "Paid") {
+        if (currentBooking && currentBooking.paymentStatus === "Paid") {
 
     paymentMessage.innerHTML = `
         <p>
@@ -552,7 +558,7 @@ async function handlePaymentReturn() {
         </p>
     `;
 
-} else if (booking.paymentStatus === "Deposit Paid") {
+} else if (currentBooking && currentBooking.paymentStatus === "Deposit Paid") {
 
     paymentMessage.innerHTML = `
         <p>
