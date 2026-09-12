@@ -57,7 +57,9 @@ const CONFIG = {
 
     firestore: {
 
-        bookingsCollection: "bookings"
+        bookingsCollection: "bookings",
+        categoriesCollection: "categories",
+        expensesCollection: "expenses"
 
     },
 
