@@ -59,7 +59,8 @@ const CONFIG = {
 
         bookingsCollection: "bookings",
         categoriesCollection: "categories",
-        expensesCollection: "expenses"
+        expensesCollection: "expenses",
+        utilityBillsCollection: "utilityBills"
 
     },
 
