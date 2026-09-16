@@ -31,10 +31,17 @@ service cloud.firestore {
 
             allow delete: if false;
         }
+
+        match /payments/{paymentId} {
+            allow read, create, update: if
+                request.auth != null &&
+                request.auth.token.role == "admin";
+
+            allow delete: if false;
+        }
+
         match /{document=**} {
             allow read, write: if false;
         }
     }
 }
-
-
