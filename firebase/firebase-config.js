@@ -13,3 +13,11 @@ firebase.initializeApp(firebaseConfig);
 
 // Firestore reference
 const db = firebase.firestore();
+
+// Use the local Firestore emulator when running the DEV site locally.
+if (
+    window.location.hostname === "127.0.0.1" ||
+    window.location.hostname === "localhost"
+) {
+    db.useEmulator("127.0.0.1", 8080);
+}
