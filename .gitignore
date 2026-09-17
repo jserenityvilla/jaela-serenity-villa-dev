@@ -4,3 +4,5 @@ node_modules/
 jaela-dev-current-changes-backup.patch
 firebase-debug.log
 firestore-debug.log
+
+emulator-data/
