@@ -530,6 +530,121 @@
             padding: 14px;
         }
     }
+</style><style>
+    /* ACCT-003C-RECORD-PAYMENT */
+
+    .record-payment-card {
+        margin-bottom: 18px;
+    }
+
+    .record-payment-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(180px, 1fr));
+        gap: 14px;
+    }
+
+    .record-payment-grid .field-full {
+        grid-column: 1 / -1;
+    }
+
+    .record-payment-context {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(180px, 1fr));
+        gap: 12px;
+        margin-top: 16px;
+    }
+
+    .record-payment-context-card {
+        border: 1px solid #dce5e5;
+        border-radius: 10px;
+        padding: 12px;
+        background: #f8fbfb;
+    }
+
+    .record-payment-context-label {
+        font-size: 11px;
+        color: var(--account-muted);
+        margin-bottom: 4px;
+    }
+
+    .record-payment-context-value {
+        font-size: 16px;
+        font-weight: 800;
+    }
+
+    .record-payment-preview {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(180px, 1fr));
+        gap: 12px;
+        margin-top: 16px;
+    }
+
+    .record-payment-preview-card {
+        border: 1px solid #dce5e5;
+        border-radius: 10px;
+        padding: 12px;
+        background: #ffffff;
+    }
+
+    .record-payment-preview-label {
+        font-size: 11px;
+        color: var(--account-muted);
+        margin-bottom: 4px;
+    }
+
+    .record-payment-preview-value {
+        font-size: 16px;
+        font-weight: 800;
+    }
+
+    .record-payment-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 18px;
+    }
+
+    .record-payment-message {
+        margin-top: 14px;
+        padding: 11px 13px;
+        border-radius: 9px;
+        font-size: 13px;
+    }
+
+    .record-payment-message.success {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    .record-payment-message.error {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+    .refund-help {
+        font-size: 11px;
+        color: var(--account-muted);
+        margin-top: 4px;
+    }
+
+    .accounts-header-actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    @media (max-width: 900px) {
+        .record-payment-grid,
+        .record-payment-context,
+        .record-payment-preview {
+            grid-template-columns: 1fr;
+        }
+
+        .record-payment-grid .field-full {
+            grid-column: auto;
+        }
+    }
 </style></head><body
     data-admin-login-path="../../login.html"
     style="visibility:hidden;"
@@ -540,6 +655,16 @@
             <div>
                 <h1>Payments</h1>
                 <p>Payment transaction ledger and reconciliation view.</p>
+            </div>
+
+            <div class="accounts-header-actions">
+                <button
+                    type="button"
+                    id="recordPaymentButton"
+                    class="btn-primary"
+                >
+                    Record Payment
+                </button>
             </div>
         </header>
 
@@ -568,8 +693,331 @@
         ></div>
 
         <section id="paymentsContent" hidden>
+        <!-- ACCT-003C-RECORD-PAYMENT -->
+        <section
+            id="recordPaymentPanel"
+            class="card record-payment-card"
+            hidden
+        >
+            <h2>Record Payment</h2>
+
+            <form id="recordPaymentForm">
+
+                <div class="record-payment-grid">
+
+                    <div class="field">
+                        <label for="recordBookingId">
+                            Booking *
+                        </label>
+
+                        <select
+                            id="recordBookingId"
+                            required
+                        >
+                            <option value="">
+                                Select booking
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="field">
+                        <label for="recordPaymentDate">
+                            Payment Date *
+                        </label>
+
+                        <input
+                            type="date"
+                            id="recordPaymentDate"
+                            required
+                        >
+                    </div>
+
+                    <div class="field">
+                        <label for="recordPaymentType">
+                            Payment Type *
+                        </label>
+
+                        <select
+                            id="recordPaymentType"
+                            required
+                        >
+                            <option value="Deposit">Deposit</option>
+                            <option value="Balance">Balance</option>
+                            <option value="Full Payment">
+                                Full Payment
+                            </option>
+                            <option value="Refund">Refund</option>
+                        </select>
+                    </div>
+
+                    <div class="field">
+                        <label for="recordAmount">
+                            Amount *
+                        </label>
+
+                        <input
+                            type="number"
+                            id="recordAmount"
+                            min="0.01"
+                            step="0.01"
+                            placeholder="0.00"
+                            required
+                        >
+
+                        <div
+                            id="refundHelp"
+                            class="refund-help"
+                            hidden
+                        >
+                            Enter the refund amount as a positive
+                            number. The ledger will store it as a
+                            negative transaction.
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label for="recordCurrency">
+                            Currency *
+                        </label>
+
+                        <input
+                            type="text"
+                            id="recordCurrency"
+                            value="AUD"
+                            maxlength="3"
+                            required
+                        >
+                    </div>
+
+                    <div class="field">
+                        <label for="recordPaymentMethod">
+                            Payment Method *
+                        </label>
+
+                        <select
+                            id="recordPaymentMethod"
+                            required
+                        >
+                            <option value="Stripe">Stripe</option>
+                            <option value="Bank Transfer">
+                                Bank Transfer
+                            </option>
+                            <option value="Cash">Cash</option>
+                            <option value="Credit/Debit Card">
+                                Credit/Debit Card
+                            </option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="field">
+                        <label for="recordPaymentStatus">
+                            Payment Status *
+                        </label>
+
+                        <select
+                            id="recordPaymentStatus"
+                            required
+                        >
+                            <option value="Pending">Pending</option>
+                            <option
+                                value="Completed"
+                                selected
+                            >
+                                Completed
+                            </option>
+                            <option value="Failed">Failed</option>
+                            <option value="Cancelled">
+                                Cancelled
+                            </option>
+                            <option value="Refunded">Refunded</option>
+                        </select>
+                    </div>
+
+                    <div class="field">
+                        <label for="recordTransactionReference">
+                            Transaction Reference
+                        </label>
+
+                        <input
+                            type="text"
+                            id="recordTransactionReference"
+                            maxlength="120"
+                            placeholder="e.g. STRIPE-12345"
+                        >
+                    </div>
+
+                    <div class="field">
+                        <label for="recordDescription">
+                            Description
+                        </label>
+
+                        <input
+                            type="text"
+                            id="recordDescription"
+                            maxlength="250"
+                            placeholder="Payment description"
+                        >
+                    </div>
+
+                    <div class="field field-full">
+                        <label for="recordNotes">
+                            Notes
+                        </label>
+
+                        <textarea
+                            id="recordNotes"
+                            rows="3"
+                            maxlength="1000"
+                            placeholder="Additional notes"
+                        ></textarea>
+                    </div>
+
+                </div>
+
+                <div class="record-payment-context">
+
+                    <div class="record-payment-context-card">
+                        <div class="record-payment-context-label">
+                            Booking Reference
+                        </div>
+
+                        <div
+                            class="record-payment-context-value"
+                            id="recordBookingReference"
+                        >
+                            —
+                        </div>
+                    </div>
+
+                    <div class="record-payment-context-card">
+                        <div class="record-payment-context-label">
+                            Guest
+                        </div>
+
+                        <div
+                            class="record-payment-context-value"
+                            id="recordGuestName"
+                        >
+                            —
+                        </div>
+                    </div>
+
+                    <div class="record-payment-context-card">
+                        <div class="record-payment-context-label">
+                            Booking Total
+                        </div>
+
+                        <div
+                            class="record-payment-context-value"
+                            id="recordBookingTotal"
+                        >
+                            AUD
 
             <section class="card">
+                <h2>Payment Filters</h2>.00
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="record-payment-preview">
+
+                    <div class="record-payment-preview-card">
+                        <div class="record-payment-preview-label">
+                            Current Net Received
+                        </div>
+
+                        <div
+                            class="record-payment-preview-value"
+                            id="recordCurrentReceived"
+                        >
+                            AUD
+
+            <section class="card">
+                <h2>Payment Filters</h2>.00
+                        </div>
+                    </div>
+
+                    <div class="record-payment-preview-card">
+                        <div class="record-payment-preview-label">
+                            Current Outstanding
+                        </div>
+
+                        <div
+                            class="record-payment-preview-value"
+                            id="recordCurrentOutstanding"
+                        >
+                            AUD
+
+            <section class="card">
+                <h2>Payment Filters</h2>.00
+                        </div>
+                    </div>
+
+                    <div class="record-payment-preview-card">
+                        <div class="record-payment-preview-label">
+                            Projected Net Received
+                        </div>
+
+                        <div
+                            class="record-payment-preview-value"
+                            id="recordProjectedReceived"
+                        >
+                            AUD
+
+            <section class="card">
+                <h2>Payment Filters</h2>.00
+                        </div>
+                    </div>
+
+                    <div class="record-payment-preview-card">
+                        <div class="record-payment-preview-label">
+                            Projected Outstanding
+                        </div>
+
+                        <div
+                            class="record-payment-preview-value"
+                            id="recordProjectedOutstanding"
+                        >
+                            AUD
+
+            <section class="card">
+                <h2>Payment Filters</h2>.00
+                        </div>
+                    </div>
+
+                </div>
+
+                <div
+                    id="recordPaymentMessage"
+                    class="record-payment-message"
+                    hidden
+                ></div>
+
+                <div class="record-payment-actions">
+
+                    <button
+                        type="submit"
+                        id="savePaymentButton"
+                        class="btn-primary"
+                    >
+                        Save Payment
+                    </button>
+
+                    <button
+                        type="button"
+                        id="cancelRecordPaymentButton"
+                        class="btn-secondary"
+                    >
+                        Cancel
+                    </button>
+
+                </div>
+
+            </form>
+        </section>
+        <section class="card">
                 <h2>Payment Filters</h2>
 
                 <div class="payments-filters-grid">
@@ -804,9 +1252,8 @@
 <script src="../../firebase/firebase-config.js"></script>
 <script src="../../assets/js/config.js"></script>
 <script src="../../assets/js/admin-auth-guard.js"></script>
+<script src="./accounts-payments-utils.js"></script>
 <script src="./accounts-payments.js"></script>
 </body>
 </html>
-
-
 
