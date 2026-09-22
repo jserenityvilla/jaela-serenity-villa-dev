@@ -111,6 +111,82 @@
                 min-height: 180px;
             }
         }
+
+        /* ACCOUNTING UX POLISH */
+        .accounting-page {
+            max-width: 1180px;
+            margin: 0 auto;
+            padding: 48px 28px 40px;
+        }
+
+        .accounting-page h1 {
+            font-size: 38px;
+            margin-bottom: 12px;
+        }
+
+        .accounting-page .accounting-intro {
+            font-size: 16px;
+            line-height: 1.6;
+            max-width: 720px;
+            margin: 0 auto 34px;
+        }
+
+        .accounting-cards {
+            max-width: 980px;
+            margin: 0 auto;
+            gap: 22px;
+        }
+
+        .accounting-card {
+            min-height: 190px;
+            padding: 26px;
+            border-radius: 14px;
+            transition: transform .18s ease, box-shadow .18s ease;
+        }
+
+        .accounting-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 24px rgba(0,0,0,.10);
+        }
+
+        .accounting-icon {
+            font-size: 34px;
+            margin-bottom: 14px;
+        }
+
+        .accounting-card h2 {
+            font-size: 21px;
+            margin: 0 0 9px;
+        }
+
+        .accounting-card p {
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .accounting-action {
+            margin-top: 18px;
+            font-weight: 600;
+        }
+
+        .accounting-footer-actions {
+            margin-top: 30px;
+            gap: 14px;
+        }
+
+        @media (max-width: 760px) {
+            .accounting-page {
+                padding: 32px 18px;
+            }
+
+            .accounting-page h1 {
+                font-size: 30px;
+            }
+
+            .accounting-card {
+                min-height: 170px;
+            }
+        }
     </style>
 </head>
 
