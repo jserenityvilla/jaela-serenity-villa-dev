@@ -153,26 +153,24 @@ async function saveBooking(booking) {
                 0,
                 totalGuests - baseOccupancy
             );
+        const promoCode =
+            String(booking.promoCode || "")
+                .trim();
+
+        const pricing =
+            calculateBookingPricing(
+                nights,
+                adults,
+                children,
+                promoCode
+            );
 
 
-        const accommodationTotal =
-            nights *
-            nightlyRate;
-
-
-        const extraGuestTotal =
-            extraGuests *
-            extraGuestRate *
-            nights;
 
 
         const total =
-            accommodationTotal +
-            extraGuestTotal +
-            cleaningFee;
-
-
-        // ==========================================
+            pricing.total;
+// ==========================================
         // Complete Booking Record
         // ==========================================
 
@@ -223,20 +221,30 @@ async function saveBooking(booking) {
 
             specialRequests:
                 booking.specialRequests || "",
-
-
             // Pricing
+            accommodationBase:
+                pricing.accommodationBase,
+
             accommodation:
-                accommodationTotal,
+                pricing.accommodation,
 
             extraGuestFee:
-                extraGuestTotal,
+                pricing.extraGuestFee,
 
             cleaningFee:
-                cleaningFee,
+                pricing.cleaningFee,
 
             total:
-                total,
+                pricing.total,
+
+            promoCode:
+                pricing.promotionCode,
+
+            promotionDiscountPercentage:
+                pricing.promotionDiscountPercentage,
+
+            promotionDiscountAmount:
+                pricing.promotionDiscount,
 
             currency:
                 CONFIG.pricing.currency,

@@ -208,7 +208,14 @@ function attachBookingForm() {
 
 
                 nights:
-                    calculateNights()
+                    calculateNights(),
+
+
+                promoCode:
+                    document.getElementById(
+                        "promoCode"
+                    ).value.trim()
+
 
             };
 
@@ -660,6 +667,14 @@ function attachValidationListeners() {
                 ) {
 
                     validateGuestCount();
+
+                    calculateStay();
+
+                }
+
+
+
+                if (field.id === "promoCode") {
 
                     calculateStay();
 

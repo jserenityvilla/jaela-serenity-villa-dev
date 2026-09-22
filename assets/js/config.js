@@ -36,6 +36,26 @@ const CONFIG = {
     },
 
     // =====================================
+    // Promotions
+    // =====================================
+
+    promotions: {
+
+        WELCOME10: {
+
+            code: "WELCOME10",
+
+            discountPercentage: 10,
+
+            appliesTo: "accommodation",
+
+            expiry: "2026-12-31"
+
+        }
+
+    },
+
+    // =====================================
     // Payment
     // =====================================
 
