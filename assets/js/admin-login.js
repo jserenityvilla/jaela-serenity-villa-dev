@@ -41,7 +41,7 @@ document.addEventListener("DOMContentLoaded", () => {
             return returnTarget;
         }
 
-        return "accounts/categories.html";
+        return "accounts/index.html";
     }
 
     loginForm.addEventListener("submit", async (event) => {

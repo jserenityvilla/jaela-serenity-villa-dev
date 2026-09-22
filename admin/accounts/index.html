@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accounting | Ja-Ela Serenity Villa</title>
+
+    <link rel="stylesheet" href="../../assets/css/style-new.css">
+    <link rel="stylesheet" href="../../assets/css/admin.css">
+    <link rel="stylesheet" href="../../assets/css/responsive.css">
+
+    <style>
+        .accounting-landing {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 60px 24px 80px;
+        }
+
+        .accounting-hero {
+            text-align: center;
+            margin-bottom: 42px;
+        }
+
+        .accounting-hero h1 {
+            margin-bottom: 10px;
+        }
+
+        .accounting-hero p {
+            max-width: 700px;
+            margin: 0 auto;
+            color: #666;
+            line-height: 1.7;
+        }
+
+        .accounting-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 24px;
+        }
+
+        .accounting-card {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 210px;
+            padding: 30px;
+            background: #fff;
+            border: 1px solid #e6e6e6;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0,0,0,.06);
+            text-decoration: none;
+            color: inherit;
+            transition: transform .2s ease, box-shadow .2s ease;
+        }
+
+        .accounting-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 14px 30px rgba(0,0,0,.10);
+        }
+
+        .accounting-icon {
+            font-size: 2.5rem;
+            margin-bottom: 16px;
+        }
+
+        .accounting-card h2 {
+            margin: 0 0 10px;
+            font-size: 1.35rem;
+        }
+
+        .accounting-card p {
+            margin: 0;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .accounting-action {
+            margin-top: 24px;
+            font-weight: 600;
+        }
+
+        .accounting-footer-actions {
+            display: flex;
+            justify-content: center;
+            gap: 14px;
+            flex-wrap: wrap;
+            margin-top: 34px;
+        }
+
+        .accounting-footer-actions a,
+        .accounting-footer-actions button {
+            border: 0;
+            border-radius: 10px;
+            padding: 11px 18px;
+            font: inherit;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        @media (max-width: 760px) {
+            .accounting-landing {
+                padding: 40px 18px 60px;
+            }
+
+            .accounting-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .accounting-card {
+                min-height: 180px;
+            }
+        }
+    </style>
+</head>
+
+<body data-admin-login-path="../login.html">
+
+<header>
+    <nav class="navbar">
+        <a href="../../admin/index.html" class="logo">
+            <img
+                src="../../assets/images/logo.png"
+                alt="Ja-Ela Serenity Villa">
+            <span>Ja-Ela Serenity Villa</span>
+        </a>
+
+        <div class="nav-links">
+            <a href="../index.html">📋 Booking Dashboard</a>
+            <a href="../../index.html">🏠 Home</a>
+        </div>
+    </nav>
+</header>
+
+<main class="accounting-landing">
+    <section class="accounting-hero">
+        <h1>Accounting</h1>
+        <p>
+            Manage the villa's financial information from one place.
+            Select an area below to continue.
+        </p>
+    </section>
+
+    <section class="accounting-grid" aria-label="Accounting modules">
+
+        <a class="accounting-card" href="./categories.html">
+            <div>
+                <div class="accounting-icon" aria-hidden="true">📂</div>
+                <h2>Categories</h2>
+                <p>Manage income, expense and utility financial categories.</p>
+            </div>
+            <div class="accounting-action">Open Categories →</div>
+        </a>
+
+        <a class="accounting-card" href="./expenses/expenses.html">
+            <div>
+                <div class="accounting-icon" aria-hidden="true">💰</div>
+                <h2>Expenses</h2>
+                <p>Manage property expenses and booking-specific costs.</p>
+            </div>
+            <div class="accounting-action">Open Expenses →</div>
+        </a>
+
+        <a class="accounting-card" href="./utilities/utilities.html">
+            <div>
+                <div class="accounting-icon" aria-hidden="true">💡</div>
+                <h2>Utilities</h2>
+                <p>Manage electricity, water and other villa utility bills.</p>
+            </div>
+            <div class="accounting-action">Open Utilities →</div>
+        </a>
+
+        <a class="accounting-card" href="./profitability.html">
+            <div>
+                <div class="accounting-icon" aria-hidden="true">📊</div>
+                <h2>Profitability</h2>
+                <p>View revenue, costs, profit margin and booking profitability.</p>
+            </div>
+            <div class="accounting-action">Open Profitability →</div>
+        </a>
+
+    </section>
+
+    <div class="accounting-footer-actions">
+        <a href="../index.html">← Booking Dashboard</a>
+        <button type="button" id="signOutButton">Sign Out</button>
+    </div>
+</main>
+
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-auth-compat.js"></script>
+<script src="../../firebase/firebase-config.js"></script>
+<script src="../../assets/js/config.js"></script>
+<script src="../../assets/js/admin-auth-guard.js"></script>
+
+<script>
+    document.getElementById("signOutButton").addEventListener("click", async () => {
+        try {
+            await firebase.auth().signOut();
+            window.location.href = "../login.html";
+        } catch (error) {
+            console.error("Admin sign-out failed:", error);
+        }
+    });
+</script>
+
+</body>
+</html>
