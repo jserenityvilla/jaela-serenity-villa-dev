@@ -978,7 +978,12 @@ exports.stripeWebhook = onRequest(
               balanceAmount,
 
               balancePaymentStatus:
-              "Balance Due",
+              balanceAmount <= 0
+                ? "Paid"
+                : "Balance Due",
+
+              balancePaid:
+              balanceAmount <= 0,
 
             });
 

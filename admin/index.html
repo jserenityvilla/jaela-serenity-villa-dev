@@ -15,6 +15,7 @@
 
     <link rel="stylesheet" href="../assets/css/responsive.css">
 
+
 </head>
 
 <body>
@@ -43,6 +44,14 @@
         <p>
             Manage all Ja-Ela Serenity Villa bookings.
         </p>
+
+        <button
+            type="button"
+            onclick="openExternalBookingModal()"
+            style="margin-top:14px;padding:10px 18px;border:0;border-radius:6px;background:#0f7c85;color:#fff;font-weight:600;cursor:pointer;"
+        >
+            + Add External Booking
+        </button>
 
     </section>
 
@@ -146,8 +155,152 @@
 <!-- Admin Dashboard -->
 <script src="../assets/js/pricing.js"></script>
 <script src="../assets/js/admin.js"></script>
+<script src="../assets/js/external-booking.js"></script>
 
 <!-- =====================================
+Manual External Booking Modal
+===================================== -->
+<div id="externalBookingModal" class="modal">
+    <div class="modal-content" style="max-width:900px;">
+
+        <span
+            class="close-modal"
+            onclick="closeExternalBookingModal()"
+        >&times;</span>
+
+        <h2>Add External Booking</h2>
+
+        <p style="color:#666;">
+            Add a confirmed booking received from Airbnb, Booking.com, Vrbo or Direct.
+        </p>
+
+        <form id="externalBookingForm">
+
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;">
+
+                <div class="form-group">
+                    <label for="externalSource">Booking Source *</label>
+                    <select id="externalSource" required>
+                        <option value="Airbnb">Airbnb</option>
+                        <option value="Booking.com">Booking.com</option>
+                        <option value="Vrbo">Vrbo</option>
+                        <option value="Direct">Direct</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="externalReference">External Booking Reference</label>
+                    <input type="text" id="externalReference" maxlength="80">
+                </div>
+
+                <div class="form-group">
+                    <label for="externalGuestName">Guest Name *</label>
+                    <input type="text" id="externalGuestName" required maxlength="120">
+                </div>
+
+                <div class="form-group">
+                    <label for="externalEmail">Email</label>
+                    <input type="email" id="externalEmail" maxlength="160">
+                </div>
+
+                <div class="form-group">
+                    <label for="externalPhone">Phone</label>
+                    <input type="text" id="externalPhone" maxlength="40">
+                </div>
+
+                <div class="form-group">
+                    <label for="externalCountry">Country</label>
+                    <input type="text" id="externalCountry" maxlength="80">
+                </div>
+
+                <div class="form-group">
+                    <label for="externalCheckin">Check-in *</label>
+                    <input type="date" id="externalCheckin" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="externalCheckout">Check-out *</label>
+                    <input type="date" id="externalCheckout" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="externalAdults">Adults *</label>
+                    <input type="number" id="externalAdults" min="0" value="2" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="externalChildren">Children</label>
+                    <input type="number" id="externalChildren" min="0" value="0">
+                </div>
+
+                <div class="form-group">
+                    <label for="externalAccommodation">Accommodation Revenue (AUD) *</label>
+                    <input type="number" id="externalAccommodation" min="0" step="0.01" value="0" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="externalExtraGuestFee">Extra Guest Fee (AUD)</label>
+                    <input type="number" id="externalExtraGuestFee" min="0" step="0.01" value="0">
+                </div>
+
+                <div class="form-group">
+                    <label for="externalCleaningFee">Cleaning Fee (AUD)</label>
+                    <input type="number" id="externalCleaningFee" min="0" step="0.01" value="0">
+                </div>
+
+                <div class="form-group">
+                    <label for="externalTotal">Total (AUD)</label>
+                    <input type="number" id="externalTotal" readonly value="0.00">
+                </div>
+
+                <div class="form-group">
+                    <label for="externalPaymentStatus">Payment Status *</label>
+                    <select id="externalPaymentStatus" required>
+                        <option value="Paid">Paid</option>
+                        <option value="Deposit Paid">Deposit Paid</option>
+                        <option value="Deposit Rejected">Deposit Rejected</option>
+                        <option value="Balance Due">Balance Due</option>
+                    </select>
+                </div>
+
+                
+
+                <div class="form-group">
+                    <label for="externalDepositPaid">Deposit Paid (AUD)</label>
+                    <input type="number" id="externalDepositPaid" min="0" step="0.01" value="0">
+                </div>
+
+                <div class="form-group" style="grid-column:1/-1;">
+                    <label for="externalNotes">Notes</label>
+                    <textarea id="externalNotes" rows="3" maxlength="1000"></textarea>
+                </div>
+
+            </div>
+
+            <p id="externalBookingMessage" style="margin-top:12px;color:#b00020;font-weight:600;"></p>
+
+            <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:16px;">
+                <button
+                    type="button"
+                    onclick="closeExternalBookingModal()"
+                    style="padding:10px 18px;border:1px solid #ccc;border-radius:6px;background:#fff;color:#333;cursor:pointer;"
+                >
+                    Cancel
+                </button>
+
+                <button
+                    type="submit"
+                    style="padding:10px 18px;border:0;border-radius:6px;background:#0f7c85;color:#fff;font-weight:600;cursor:pointer;"
+                >
+                    Save Booking
+                </button>
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
 Booking Details Modal
 ===================================== -->
 
@@ -182,3 +335,8 @@ Booking Details Modal
 </div>
 </body>
 </html>
+
+
+
+
+
