@@ -488,7 +488,6 @@ exports.createDepositCheckout = onRequest(
         }
 
         const booking =
-<<<<<<< HEAD
           bookingSnapshot.data();
 
         if (
@@ -498,18 +497,10 @@ exports.createDepositCheckout = onRequest(
           return res.status(400).json({
             error:
               "Only pending or confirmed bookings can request payment.",
-=======
-        bookingSnapshot.data();
-
-        if (booking.status !== "Confirmed") {
-          return res.status(400).json({
-            error: "Only confirmed bookings can request payment.",
->>>>>>> 0f1998e (Add Stripe deposit and balance payment workflow)
           });
         }
 
         const total =
-<<<<<<< HEAD
           Number(booking.total) || 0;
 
         const depositPercentage =
@@ -533,20 +524,6 @@ exports.createDepositCheckout = onRequest(
             depositPercentage /
             100
           );
-=======
-        Number(booking.total) || 0;
-
-        const depositPercentage =
-        Number(booking.depositPercentage) || 30;
-
-        const depositAmount =
-        Number(booking.depositAmount) ||
-        (
-          total *
-          depositPercentage /
-          100
-        );
->>>>>>> 0f1998e (Add Stripe deposit and balance payment workflow)
 
         if (depositAmount <= 0) {
           return res.status(400).json({
@@ -952,21 +929,12 @@ exports.stripeWebhook = onRequest(
 
           if (paymentType === "deposit") {
             const total =
-<<<<<<< HEAD
                 Number(booking.total) || 0;
 
             const depositPercentage =
                 Number(
                     booking.depositPercentage,
                 );
-=======
-            Number(booking.total) || 0;
-
-            const depositPercentage =
-            Number(
-                booking.depositPercentage,
-            ) || 30;
->>>>>>> 0f1998e (Add Stripe deposit and balance payment workflow)
 
             const depositAmount =
             Number(
@@ -985,12 +953,9 @@ exports.stripeWebhook = onRequest(
 
             await bookingRef.update({
 
-<<<<<<< HEAD
               status:
               "Confirmed",
 
-=======
->>>>>>> 0f1998e (Add Stripe deposit and balance payment workflow)
               paymentStatus:
               "Deposit Paid",
 
