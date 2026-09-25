@@ -1,0 +1,6 @@
+const http=require("http");
+const H="127.0.0.1",P=8080,PROJ="ja-ela-serenity-villa-test";
+const BASE=`/v1/projects/${PROJ}/databases/(default)/documents/bookings`;
+const REFS=new Set(["DIRECT-PAY-TEST-018","DIRECT-PAY-TEST-019","DIRECT-PAY-TEST-020","DIRECT-PAY-TEST-021","DIRECT-PAY-TEST-022","DIRECT-PAY-TEST-023","DIRECT-PAY-TEST-024","DIRECT-PAY-TEST-026","DIRECT-PAY-TEST-027","DIRECT-PAY-TEST-028"]);
+function req(method,path){return new Promise((ok,bad)=>{const r=http.request({hostname:H,port:P,path,method},res=>{let b="";res.on("data",x=>b+=x);res.on("end",()=>ok({code:res.statusCode,body:b}));});r.on("error",bad);r.end();});}
+(async()=>{const r=await req("GET",`${BASE}?pageSize=100`);if(r.code!==200)throw Error(`Emulator unavailable: HTTP ${r.code}`);const docs=(JSON.parse(r.body).documents||[]).filter(d=>REFS.has(d.fields?.bookingReference?.stringValue));console.log(`Found ${docs.length} existing payment-test documents.`);for(const d of docs){const id=d.name.split("/").pop(),ref=d.fields.bookingReference.stringValue,x=await req("DELETE",`${BASE}/${encodeURIComponent(id)}`);if(x.code!==200)throw Error(`Delete failed: ${ref}`);console.log(`DELETED ${ref} / ${id}`);}console.log("Cleanup complete.");})().catch(e=>{console.error("CLEANUP FAILED:",e.message);process.exit(1);});
