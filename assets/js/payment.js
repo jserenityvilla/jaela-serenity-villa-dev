@@ -188,11 +188,10 @@ async function loadBooking() {
 
 
         // ==================================================
-        // Booking must be confirmed
+        // Cancelled booking
         // ==================================================
-
         if (
-            booking.status !== "Confirmed"
+            booking.status === "Cancelled"
         ) {
 
             currentPaymentType =
@@ -200,8 +199,7 @@ async function loadBooking() {
 
             paymentMessage.innerHTML = `
                 <p>
-                    Your booking has not yet been confirmed.
-                    Please wait for the confirmation email.
+                    This booking has been cancelled. No further payment can be made.
                 </p>
             `;
 
@@ -209,7 +207,7 @@ async function loadBooking() {
                 true;
 
             payDepositBtn.textContent =
-                "Awaiting Booking Confirmation";
+                "Booking Cancelled";
 
             return;
         }
