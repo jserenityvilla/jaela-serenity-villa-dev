@@ -484,8 +484,8 @@
             <div class="field">
                 <label for="addBookingStatus">Booking Status</label>
                 <select id="addBookingStatus">
+                    <option value="Confirmed" selected>Confirmed</option>
                     <option value="Pending">Pending</option>
-                    <option value="Confirmed">Confirmed</option>
                     <option value="Cancelled">Cancelled</option>
                 </select>
             </div>
@@ -605,11 +605,23 @@
             <div class="field">
                 <label for="addPaymentStatus">Payment Status</label>
                 <select id="addPaymentStatus">
+                    <option value="Balance Due" selected>Balance Due</option>
                     <option value="Deposit Required">Deposit Required</option>
                     <option value="Deposit Paid">Deposit Paid</option>
                     <option value="Paid">Paid</option>
-                    <option value="Balance Due">Balance Due</option>
                 </select>
+            </div>
+            <div class="field">
+                <label for="addPaymentCurrency">Payment Currency</label>
+                <select id="addPaymentCurrency">
+                    <option value="LKR">LKR</option>
+                    <option value="AUD">AUD</option>
+                    <option value="USD">USD</option>
+                </select>
+            </div>
+            <div class="field">
+                <label for="addPaymentDate">Payment Received Date</label>
+                <input type="date" id="addPaymentDate">
             </div>
         </div>
     </div>
@@ -770,6 +782,69 @@
             </div>
         </div>
     </section>
+
+<section class="card" id="editBookingCard" style="display:none;">
+    <h2>Edit Booking</h2>
+
+    <div class="detail-grid">
+        <div class="detail-item">
+            <div class="detail-label">Booking Reference</div>
+            <div class="detail-value" id="editBookingReference">-</div>
+        </div>
+
+        <div class="detail-item">
+            <div class="detail-label">Guest</div>
+            <div class="detail-value" id="editBookingGuest">-</div>
+        </div>
+    </div>
+
+    <div class="detail-section">
+        <h3>Booking & Payment Status</h3>
+
+        <div class="filters-grid">
+            <div class="field">
+                <label for="editBookingStatus">Booking Status</label>
+                <select id="editBookingStatus">
+                    <option value="Confirmed">Confirmed</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Cancelled">Cancelled</option>
+                </select>
+            </div>
+
+            <div class="field">
+                <label for="editPaymentStatus">Payment Status</label>
+                <select id="editPaymentStatus">
+                    <option value="Balance Due">Balance Due</option>
+                    <option value="Deposit Required">Deposit Required</option>
+                    <option value="Deposit Paid">Deposit Paid</option>
+                    <option value="Paid">Paid</option>
+                </select>
+            </div>
+
+            <div class="field">
+                <label for="editPaymentCurrency">Payment Currency</label>
+                <select id="editPaymentCurrency">
+                    <option value="">Not received</option>
+                    <option value="LKR">LKR</option>
+                    <option value="AUD">AUD</option>
+                    <option value="USD">USD</option>
+                </select>
+            </div>
+
+            <div class="field">
+                <label for="editPaymentDate">Payment Received Date</label>
+                <input type="date" id="editPaymentDate">
+            </div>
+        </div>
+    </div>
+
+    <div id="editBookingError" class="error-message" style="display:none;"></div>
+
+    <div class="portal-actions" style="margin-top:16px;">
+        <button type="button" class="btn-primary" id="saveEditBookingBtn">Save Changes</button>
+        <button type="button" class="btn-secondary" id="cancelEditBookingBtn">Cancel</button>
+    </div>
+</section>
 
 </div>
 

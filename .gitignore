@@ -6,3 +6,6 @@ firebase-debug.log
 firestore-debug.log
 
 emulator-data/
+
+# Firebase local cache
+.firebase/

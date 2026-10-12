@@ -380,6 +380,141 @@
         ).textContent = money(outstanding);
     };
 
+    const showEditBooking = (booking) => {
+        document.getElementById("editBookingReference").textContent =
+            getBookingReference(booking, booking.id);
+
+        document.getElementById("editBookingGuest").textContent =
+            booking.guestName ||
+            booking.guest ||
+            booking.name ||
+            "-";
+
+        document.getElementById("editBookingStatus").value =
+            booking.status || "Confirmed";
+
+        document.getElementById("editPaymentStatus").value =
+            getPaymentStatus(booking);
+
+        document.getElementById("editPaymentCurrency").value =
+            booking.paymentCurrency || "";
+
+        document.getElementById("editPaymentDate").value =
+            booking.paymentReceivedDate || "";
+
+        document.getElementById("editBookingError").style.display = "none";
+
+        const editCard =
+            document.getElementById("editBookingCard");
+
+        editCard.style.display = "block";
+
+        editCard.dataset.bookingId = booking.id;
+
+        editCard.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
+    };
+
+    const hideEditBooking = () => {
+        const editCard =
+            document.getElementById("editBookingCard");
+
+        if (editCard) {
+            editCard.style.display = "none";
+            editCard.dataset.bookingId = "";
+        }
+    };
+
+    const saveEditBooking = async () => {
+        const editCard =
+            document.getElementById("editBookingCard");
+
+        const errorElement =
+            document.getElementById("editBookingError");
+
+        const bookingId =
+            editCard?.dataset.bookingId;
+
+        if (!bookingId) {
+            return;
+        }
+
+        const bookingStatus =
+            document.getElementById("editBookingStatus").value;
+
+        const paymentStatus =
+            document.getElementById("editPaymentStatus").value;
+
+        const paymentCurrency =
+            document.getElementById("editPaymentCurrency").value;
+
+        const paymentReceivedDate =
+            document.getElementById("editPaymentDate").value;
+
+        try {
+            errorElement.style.display = "none";
+
+            const config = window.CONFIG || {};
+
+            const collectionName =
+                config.firestore?.bookingsCollection ||
+                window.APP_CONFIG?.firestore?.bookingsCollection ||
+                "bookings";
+
+            let depositPaid = false;
+            let balancePaid = false;
+
+            if (paymentStatus === "Deposit Paid") {
+                depositPaid = true;
+            }
+
+            if (paymentStatus === "Paid") {
+                depositPaid = true;
+                balancePaid = true;
+            }
+
+            await db
+                .collection(collectionName)
+                .doc(bookingId)
+                .update({
+                    status: bookingStatus,
+                    paymentStatus: paymentStatus,
+                    paymentCurrency: paymentCurrency,
+                    paymentReceivedDate: paymentReceivedDate,
+                    depositPaid: depositPaid,
+                    balancePaid: balancePaid
+                });
+
+            await loadBookings();
+
+            hideEditBooking();
+
+            refresh();
+
+            const updatedBooking =
+                allBookings.find(
+                    (booking) => booking.id === bookingId
+                );
+
+            if (updatedBooking) {
+                showDetail(updatedBooking);
+            }
+
+        } catch (error) {
+            console.error(
+                "Edit booking save error:",
+                error
+            );
+
+            errorElement.textContent =
+                error.message ||
+                "Unable to save booking changes.";
+
+            errorElement.style.display = "block";
+        }
+    };
     const renderRows = (bookings) => {
         const tbody =
             document.getElementById(
@@ -476,17 +611,31 @@
 
                 <td>
                     <button
-                        class="btn-secondary"
+                        type="button"
+                        class="btn-secondary view-booking-btn"
                         data-booking-id="${escapeHtml(booking.id)}">
                         View
+                    </button>
+
+                    <button
+                        type="button"
+                        class="btn-secondary edit-booking-btn"
+                        data-booking-id="${escapeHtml(booking.id)}">
+                        Edit
                     </button>
                 </td>
             `;
 
-            row.querySelector("button")
+            row.querySelector(".view-booking-btn")
                 .addEventListener(
                     "click",
                     () => showDetail(booking)
+                );
+
+            row.querySelector(".edit-booking-btn")
+                .addEventListener(
+                    "click",
+                    () => showEditBooking(booking)
                 );
 
             tbody.appendChild(row);
@@ -719,6 +868,20 @@
             ).addEventListener(
                 "input",
                 refresh
+            );
+
+            document.getElementById(
+                "saveEditBookingBtn"
+            ).addEventListener(
+                "click",
+                saveEditBooking
+            );
+
+            document.getElementById(
+                "cancelEditBookingBtn"
+            ).addEventListener(
+                "click",
+                hideEditBooking
             );
 
             console.log(
@@ -1260,7 +1423,7 @@ updateAdminTotalGuests();
                     "Deposit Required",
 
                 depositPaid:
-                    ["Deposit Paid", "Balance Due", "Paid"].includes(document.getElementById("addPaymentStatus")?.value),
+                    ["Deposit Paid", "Paid"].includes(document.getElementById("addPaymentStatus")?.value),
 
                 balancePaid:
                     document.getElementById("addPaymentStatus")?.value === "Paid",
