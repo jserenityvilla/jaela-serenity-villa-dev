@@ -1063,16 +1063,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         }
 
-        if (
-            expenseFromDate.value &&
-            expenseToDate.value &&
-            expenseFromDate.value >
-                expenseToDate.value
-        ) {
 
-            return false;
-
-        }
 
         return true;
 
@@ -1377,26 +1368,17 @@ document.addEventListener("DOMContentLoaded", async () => {
     );
 
     function applyExpenseDateFilter() {
+        const fromDate = expenseFromDate.value;
+        const toDate = expenseToDate.value;
 
-        if (
-            expenseFromDate.value &&
-            expenseToDate.value &&
-            expenseFromDate.value >
-                expenseToDate.value
-        ) {
-
-            alert(
-                "From date cannot be later than To date."
-            );
-
+        if (fromDate && toDate && fromDate > toDate) {
+            alert("From date cannot be later than To date.");
             expenseFromDate.focus();
-
             return;
         }
 
         renderExpenses();
     }
-
     expenseFromDate.addEventListener(
         "change",
         applyExpenseDateFilter

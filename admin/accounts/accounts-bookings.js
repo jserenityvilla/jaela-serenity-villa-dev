@@ -60,7 +60,21 @@
     };
 
     const getDepositPaid = (booking) => {
-        if (booking.depositPaid === true) {
+        if (
+            booking.depositPaymentStatus === "Paid" &&
+            number(booking.depositPaymentAmount) > 0
+        ) {
+            return number(booking.depositPaymentAmount);
+        }
+
+        if (
+            booking.depositPaid === true ||
+            (
+                (booking.depositPaymentStatus === undefined ||
+                    booking.depositPaymentStatus === null) &&
+                booking.paymentStatus === "Balance Due"
+            )
+        ) {
             return number(booking.depositAmount);
         }
 
@@ -69,8 +83,14 @@
 
     const getBalancePaid = (booking) => {
         if (
-            booking.balancePaid === true ||
-            booking.balancePaymentStatus === "Paid"
+            booking.balancePaymentStatus === "Paid" &&
+            number(booking.balancePaymentAmount) > 0
+        ) {
+            return number(booking.balancePaymentAmount);
+        }
+
+        if (
+            booking.balancePaid === true
         ) {
             return number(booking.balanceAmount);
         }
@@ -86,6 +106,68 @@
         return Math.max(
             0,
             total - depositPaid - balancePaid
+        );
+    };
+    const getDepositPaidLkr = (booking) => {
+        if (
+            booking.depositPaymentStatus === "Paid" &&
+            number(booking.depositPaymentAmountLkr) > 0
+        ) {
+            return number(booking.depositPaymentAmountLkr);
+        }
+
+        if (
+            booking.depositPaid === true ||
+            (
+                (booking.depositPaymentStatus === undefined ||
+                    booking.depositPaymentStatus === null) &&
+                booking.paymentStatus === "Balance Due"
+            )
+        ) {
+            return number(booking.depositAmountLkr);
+        }
+
+        return 0;
+    };
+
+    const getBalancePaidLkr = (booking) => {
+        if (
+            booking.balancePaymentStatus === "Paid" &&
+            number(booking.balancePaymentAmountLkr) > 0
+        ) {
+            return number(booking.balancePaymentAmountLkr);
+        }
+
+        if (booking.balancePaid === true) {
+            return number(booking.balanceAmountLkr);
+        }
+
+        return 0;
+    };
+
+    const getTotalLkr = (booking) => {
+        if (number(booking.totalLkr) > 0) {
+            return number(booking.totalLkr);
+        }
+
+        const total = number(booking.total);
+        const exchangeRate = number(booking.exchangeRateToLkr);
+
+        if (booking.currency === "LKR") {
+            return total;
+        }
+
+        return total * exchangeRate;
+    };
+
+    const getOutstandingLkr = (booking) => {
+        const totalLkr = getTotalLkr(booking);
+        const depositPaidLkr = getDepositPaidLkr(booking);
+        const balancePaidLkr = getBalancePaidLkr(booking);
+
+        return Math.max(
+            0,
+            totalLkr - depositPaidLkr - balancePaidLkr
         );
     };
 
@@ -393,14 +475,115 @@
         document.getElementById("editBookingStatus").value =
             booking.status || "Confirmed";
 
-        document.getElementById("editPaymentStatus").value =
+        const legacyPaymentStatus =
             getPaymentStatus(booking);
 
-        document.getElementById("editPaymentCurrency").value =
-            booking.paymentCurrency || "";
+        const depositPaymentStatus =
+            booking.depositPaymentStatus ||
+            (booking.depositPaid === true ||
+            legacyPaymentStatus === "Deposit Paid" ||
+            legacyPaymentStatus === "Balance Due" ||
+            legacyPaymentStatus === "Paid"
+                ? "Paid"
+                : "Not Paid");
 
-        document.getElementById("editPaymentDate").value =
-            booking.paymentReceivedDate || "";
+        const storedBalancePaymentStatus =
+            booking.balancePaymentStatus;
+
+        const balancePaymentStatus =
+            storedBalancePaymentStatus === "Paid" ||
+            storedBalancePaymentStatus === "Not Paid"
+                ? storedBalancePaymentStatus
+                : (
+                    booking.balancePaid === true ||
+                    legacyPaymentStatus === "Paid"
+                        ? "Paid"
+                        : "Not Paid"
+                );
+
+        document.getElementById("editDepositPaymentStatus").value =
+            depositPaymentStatus;
+
+        document.getElementById("editDepositPaymentCurrency").value =
+            booking.depositPaymentCurrency ||
+            (depositPaymentStatus === "Paid"
+                ? booking.paymentCurrency || booking.currency || ""
+                : "");
+
+        document.getElementById("editDepositPaymentAmount").value =
+            booking.depositPaymentAmount ??
+            (
+                depositPaymentStatus === "Paid" &&
+                !booking.depositPaymentStatus
+                    ? booking.depositAmount ?? ""
+                    : ""
+            );
+
+        document.getElementById("editDepositPaymentDate").value =
+            booking.depositPaymentDate ||
+            (depositPaymentStatus === "Paid"
+                ? booking.paymentReceivedDate || ""
+                : "");
+
+        document.getElementById("editDepositPaymentExchangeRate").value =
+            booking.depositPaymentExchangeRateToLkr ??
+            (
+                depositPaymentStatus === "Paid" &&
+                !booking.depositPaymentStatus
+                    ? booking.exchangeRateToLkr ?? ""
+                    : ""
+            );
+
+        document.getElementById("editBalancePaymentStatus").value =
+            balancePaymentStatus;
+
+        document.getElementById("editBalancePaymentCurrency").value =
+            booking.balancePaymentCurrency ||
+            (balancePaymentStatus === "Paid"
+                ? booking.paymentCurrency || booking.currency || ""
+                : "");
+
+        document.getElementById("editBalancePaymentAmount").value =
+            booking.balancePaymentAmount ??
+            (
+                balancePaymentStatus === "Paid" &&
+                !booking.balancePaymentStatus
+                    ? booking.balanceAmount ?? ""
+                    : ""
+            );
+
+        document.getElementById("editBalancePaymentDate").value =
+            booking.balancePaymentDate ||
+            (balancePaymentStatus === "Paid"
+                ? booking.paymentReceivedDate || ""
+                : "");
+
+        document.getElementById("editBalancePaymentExchangeRate").value =
+            booking.balancePaymentExchangeRateToLkr ??
+            (
+                balancePaymentStatus === "Paid" &&
+                !booking.balancePaymentStatus
+                    ? booking.exchangeRateToLkr ?? ""
+                    : ""
+            );
+
+        [
+            "editDepositPaymentStatus",
+            "editDepositPaymentCurrency",
+            "editDepositPaymentAmount",
+            "editDepositPaymentDate",
+            "editDepositPaymentExchangeRate",
+            "editBalancePaymentStatus",
+            "editBalancePaymentCurrency",
+            "editBalancePaymentAmount",
+            "editBalancePaymentDate",
+            "editBalancePaymentExchangeRate"
+        ].forEach((id) => {
+            const element = document.getElementById(id);
+            if (element) {
+                element.dataset.originalValue = element.value;
+            }
+        });
 
         document.getElementById("editBookingError").style.display = "none";
 
@@ -410,6 +593,8 @@
         editCard.style.display = "block";
 
         editCard.dataset.bookingId = booking.id;
+
+        calculateEditPaymentAmounts();
 
         editCard.scrollIntoView({
             behavior: "smooth",
@@ -444,14 +629,228 @@
         const bookingStatus =
             document.getElementById("editBookingStatus").value;
 
+        const originalBooking = allBookings.find(
+            (booking) => booking.id === bookingId
+        );
+
+        if (!originalBooking) {
+            errorElement.textContent =
+                "Original booking not found. Please reload and try again.";
+            errorElement.style.display = "block";
+            return;
+        }
+
+        const paymentFieldIds = [
+            "editDepositPaymentStatus",
+            "editDepositPaymentCurrency",
+            "editDepositPaymentAmount",
+            "editDepositPaymentDate",
+            "editDepositPaymentExchangeRate",
+            "editBalancePaymentStatus",
+            "editBalancePaymentCurrency",
+            "editBalancePaymentAmount",
+            "editBalancePaymentDate",
+            "editBalancePaymentExchangeRate"
+        ];
+
+        const paymentFieldsChanged = paymentFieldIds.some((id) => {
+            const element = document.getElementById(id);
+            return !element ||
+                element.value !== element.dataset.originalValue;
+        });
+
+        if (!paymentFieldsChanged) {
+            try {
+                errorElement.style.display = "none";
+
+                const config = window.CONFIG || {};
+                const collectionName =
+                    config.firestore?.bookingsCollection ||
+                    window.APP_CONFIG?.firestore?.bookingsCollection ||
+                    "bookings";
+
+                await db.collection(collectionName)
+                    .doc(bookingId)
+                    .update({
+                        status: bookingStatus
+                    });
+
+                await loadBookings();
+                hideEditBooking();
+                refresh();
+
+                const updatedBooking = allBookings.find(
+                    (booking) => booking.id === bookingId
+                );
+
+                if (updatedBooking) {
+                    showDetail(updatedBooking);
+                }
+
+                return;
+            } catch (error) {
+                console.error("Booking status update error:", error);
+                errorElement.textContent =
+                    error.message || "Unable to update booking.";
+                errorElement.style.display = "block";
+                return;
+            }
+        }
+
+        const depositPaymentStatus =
+            document.getElementById("editDepositPaymentStatus").value;
+
+        const depositPaymentCurrency =
+            document.getElementById("editDepositPaymentCurrency").value;
+
+        const depositPaymentAmount =
+            Number(
+                document.getElementById("editDepositPaymentAmount").value
+            ) || 0;
+
+        const depositPaymentDate =
+            document.getElementById("editDepositPaymentDate").value;
+
+        const depositPaymentExchangeRateToLkr =
+            depositPaymentCurrency === "LKR"
+                ? 1
+                : Number(
+                    document.getElementById(
+                        "editDepositPaymentExchangeRate"
+                    ).value
+                ) || 0;
+
+        const depositPaymentAmountLkr =
+            depositPaymentCurrency === "LKR"
+                ? depositPaymentAmount
+                : depositPaymentAmount *
+                  depositPaymentExchangeRateToLkr;
+
+        const balancePaymentStatus =
+            document.getElementById("editBalancePaymentStatus").value;
+
+        const balancePaymentCurrency =
+            document.getElementById("editBalancePaymentCurrency").value;
+
+        const balancePaymentAmount =
+            Number(
+                document.getElementById("editBalancePaymentAmount").value
+            ) || 0;
+
+        const balancePaymentDate =
+            document.getElementById("editBalancePaymentDate").value;
+
+        const balancePaymentExchangeRateToLkr =
+            balancePaymentCurrency === "LKR"
+                ? 1
+                : Number(
+                    document.getElementById(
+                        "editBalancePaymentExchangeRate"
+                    ).value
+                ) || 0;
+
+        const balancePaymentAmountLkr =
+            balancePaymentCurrency === "LKR"
+                ? balancePaymentAmount
+                : balancePaymentAmount *
+                  balancePaymentExchangeRateToLkr;
+
+        const validateActualPayment = (
+            paymentName,
+            status,
+            currency,
+            amount,
+            paymentDate,
+            exchangeRate
+        ) => {
+            if (status !== "Paid") {
+                return true;
+            }
+
+            if (!currency) {
+                errorElement.textContent =
+                    `${paymentName} currency is required when the payment status is Paid.`;
+                errorElement.style.display = "block";
+                return false;
+            }
+
+            if (amount <= 0) {
+                errorElement.textContent =
+                    `${paymentName} amount must be greater than zero.`;
+                errorElement.style.display = "block";
+                return false;
+            }
+
+            if (!paymentDate) {
+                errorElement.textContent =
+                    `${paymentName} date is required.`;
+                errorElement.style.display = "block";
+                return false;
+            }
+
+            if (currency !== "LKR" && exchangeRate <= 0) {
+                errorElement.textContent =
+                    `${paymentName} exchange rate to LKR is required for ${currency} payments.`;
+                errorElement.style.display = "block";
+                return false;
+            }
+
+            return true;
+        };
+
+        if (
+            !validateActualPayment(
+                "Deposit payment",
+                depositPaymentStatus,
+                depositPaymentCurrency,
+                depositPaymentAmount,
+                depositPaymentDate,
+                depositPaymentExchangeRateToLkr
+            ) ||
+            !validateActualPayment(
+                "Balance payment",
+                balancePaymentStatus,
+                balancePaymentCurrency,
+                balancePaymentAmount,
+                balancePaymentDate,
+                balancePaymentExchangeRateToLkr
+            )
+        ) {
+            errorElement.scrollIntoView({
+                behavior: "smooth",
+                block: "center"
+            });
+            return;
+        }
+
+        const depositPaid =
+            depositPaymentStatus === "Paid";
+
+        const balancePaid =
+            balancePaymentStatus === "Paid";
+
         const paymentStatus =
-            document.getElementById("editPaymentStatus").value;
+            depositPaid && balancePaid
+                ? "Paid"
+                : depositPaid
+                    ? "Deposit Paid"
+                    : balancePaid
+                        ? "Balance Due"
+                        : "Deposit Required";
 
         const paymentCurrency =
-            document.getElementById("editPaymentCurrency").value;
+            balancePaid
+                ? balancePaymentCurrency
+                : depositPaid
+                    ? depositPaymentCurrency
+                    : "";
 
         const paymentReceivedDate =
-            document.getElementById("editPaymentDate").value;
+            balancePaid
+                ? balancePaymentDate
+                : depositPaid
+                    ? depositPaymentDate
+                    : "";
 
         try {
             errorElement.style.display = "none";
@@ -463,28 +862,44 @@
                 window.APP_CONFIG?.firestore?.bookingsCollection ||
                 "bookings";
 
-            let depositPaid = false;
-            let balancePaid = false;
-
-            if (paymentStatus === "Deposit Paid") {
-                depositPaid = true;
-            }
-
-            if (paymentStatus === "Paid") {
-                depositPaid = true;
-                balancePaid = true;
-            }
-
             await db
                 .collection(collectionName)
                 .doc(bookingId)
                 .update({
                     status: bookingStatus,
+
                     paymentStatus: paymentStatus,
                     paymentCurrency: paymentCurrency,
                     paymentReceivedDate: paymentReceivedDate,
+
                     depositPaid: depositPaid,
-                    balancePaid: balancePaid
+                    balancePaid: balancePaid,
+
+                    depositPaymentStatus:
+                        depositPaymentStatus,
+                    depositPaymentAmount:
+                        depositPaymentAmount,
+                    depositPaymentCurrency:
+                        depositPaymentCurrency,
+                    depositPaymentDate:
+                        depositPaymentDate,
+                    depositPaymentExchangeRateToLkr:
+                        depositPaymentExchangeRateToLkr,
+                    depositPaymentAmountLkr:
+                        depositPaymentAmountLkr,
+
+                    balancePaymentStatus:
+                        balancePaymentStatus,
+                    balancePaymentAmount:
+                        balancePaymentAmount,
+                    balancePaymentCurrency:
+                        balancePaymentCurrency,
+                    balancePaymentDate:
+                        balancePaymentDate,
+                    balancePaymentExchangeRateToLkr:
+                        balancePaymentExchangeRateToLkr,
+                    balancePaymentAmountLkr:
+                        balancePaymentAmountLkr
                 });
 
             await loadBookings();
@@ -717,7 +1132,7 @@
         document.getElementById(
             "detailDepositPaid"
         ).textContent =
-            money(getDepositPaid(booking), booking.currency || "AUD");
+            `${(booking.depositPaymentCurrency === "LKR") ? money(getDepositPaidLkr(booking), "LKR") : `${money(getDepositPaid(booking), booking.depositPaymentCurrency || booking.currency || "AUD")} | ${money(getDepositPaidLkr(booking), "LKR")}`}`;
 
         document.getElementById(
             "detailBalance"
@@ -727,12 +1142,12 @@
         document.getElementById(
             "detailBalancePaid"
         ).textContent =
-            money(getBalancePaid(booking), booking.currency || "AUD");
+            `${(booking.balancePaymentCurrency === "LKR") ? money(getBalancePaidLkr(booking), "LKR") : `${money(getBalancePaid(booking), booking.balancePaymentCurrency || booking.currency || "AUD")} | ${money(getBalancePaidLkr(booking), "LKR")}`}`;
 
         document.getElementById(
             "detailOutstanding"
         ).textContent =
-            money(getOutstanding(booking), booking.currency || "AUD");
+            money(getOutstandingLkr(booking), "LKR");
 
         document.getElementById(
             "detailPaymentStatus"
@@ -913,7 +1328,6 @@
         init
     );
 
-})();
 
 
 
@@ -999,6 +1413,165 @@
 
     calculateAdminBookingPricing();
 
+    // ============================================
+    // Admin Add Booking - Actual Payment Calculation
+    // ============================================
+
+    function calculateAdminPaymentAmounts() {
+        const calculatePaymentLkr = (
+            amountElementId,
+            currencyElementId,
+            exchangeRateElementId,
+            outputElementId
+        ) => {
+            const amount =
+                Number(document.getElementById(amountElementId)?.value) || 0;
+
+            const currency =
+                document.getElementById(currencyElementId)?.value || "";
+
+            const exchangeRate =
+                Number(document.getElementById(exchangeRateElementId)?.value) || 0;
+
+            let amountLkr = 0;
+
+            if (amount > 0 && currency) {
+                amountLkr =
+                    currency === "LKR"
+                        ? amount
+                        : amount * exchangeRate;
+            }
+
+            const outputElement =
+                document.getElementById(outputElementId);
+
+            if (outputElement) {
+                outputElement.textContent =
+                    formatBookingCurrency(amountLkr, "LKR");
+            }
+        };
+
+        calculatePaymentLkr(
+            "addDepositPaymentAmount",
+            "addDepositPaymentCurrency",
+            "addDepositPaymentExchangeRate",
+            "addDepositPaymentAmountLkr"
+        );
+
+        calculatePaymentLkr(
+            "addBalancePaymentAmount",
+            "addBalancePaymentCurrency",
+            "addBalancePaymentExchangeRate",
+            "addBalancePaymentAmountLkr"
+        );
+    }
+
+    [
+        "addDepositPaymentAmount",
+        "addDepositPaymentCurrency",
+        "addDepositPaymentExchangeRate",
+        "addBalancePaymentAmount",
+        "addBalancePaymentCurrency",
+        "addBalancePaymentExchangeRate"
+    ].forEach(id => {
+        const element = document.getElementById(id);
+
+        if (element) {
+            element.addEventListener(
+                "input",
+                calculateAdminPaymentAmounts
+            );
+
+            element.addEventListener(
+                "change",
+                calculateAdminPaymentAmounts
+            );
+        }
+    });
+
+    calculateAdminPaymentAmounts();
+
+    // ============================================
+    // Admin Edit Booking - Payment Calculation
+    // ============================================
+
+    function calculateEditPaymentAmounts() {
+        const calculatePaymentLkr = (
+            amountElementId,
+            currencyElementId,
+            exchangeRateElementId,
+            outputElementId
+        ) => {
+            const amount =
+                Number(
+                    document.getElementById(amountElementId)?.value
+                ) || 0;
+
+            const currency =
+                document.getElementById(currencyElementId)?.value || "";
+
+            const exchangeRate =
+                Number(
+                    document.getElementById(exchangeRateElementId)?.value
+                ) || 0;
+
+            let amountLkr = 0;
+
+            if (amount > 0 && currency) {
+                amountLkr =
+                    currency === "LKR"
+                        ? amount
+                        : amount * exchangeRate;
+            }
+
+            const outputElement =
+                document.getElementById(outputElementId);
+
+            if (outputElement) {
+                outputElement.textContent =
+                    formatBookingCurrency(amountLkr, "LKR");
+            }
+        };
+
+        calculatePaymentLkr(
+            "editDepositPaymentAmount",
+            "editDepositPaymentCurrency",
+            "editDepositPaymentExchangeRate",
+            "editDepositPaymentAmountLkr"
+        );
+
+        calculatePaymentLkr(
+            "editBalancePaymentAmount",
+            "editBalancePaymentCurrency",
+            "editBalancePaymentExchangeRate",
+            "editBalancePaymentAmountLkr"
+        );
+    }
+
+    [
+        "editDepositPaymentAmount",
+        "editDepositPaymentCurrency",
+        "editDepositPaymentExchangeRate",
+        "editBalancePaymentAmount",
+        "editBalancePaymentCurrency",
+        "editBalancePaymentExchangeRate"
+    ].forEach(id => {
+        const element = document.getElementById(id);
+
+        if (element) {
+            element.addEventListener(
+                "input",
+                calculateEditPaymentAmounts
+            );
+
+            element.addEventListener(
+                "change",
+                calculateEditPaymentAmounts
+            );
+        }
+    });
+
+    calculateEditPaymentAmounts();
     // ============================================
     // Admin Add Booking - Nights Calculation
     // ============================================
@@ -1254,9 +1827,19 @@ updateAdminTotalGuests();
     // ============================================
 
     const saveBookingBtn = document.getElementById("saveBookingBtn");
+    let isSavingAdminBooking = false;
 
     if (saveBookingBtn) {
         saveBookingBtn.addEventListener("click", async () => {
+            if (isSavingAdminBooking) {
+                return;
+            }
+
+            isSavingAdminBooking = true;
+
+            saveBookingBtn.disabled = true;
+
+            saveBookingBtn.textContent = "Checking availability...";
             const datesValid = validateAdminBookingDates();
             const guestsValid = validateAdminGuestCount();
             const guestInformationValid = validateAdminGuestInformation();
@@ -1266,10 +1849,40 @@ updateAdminTotalGuests();
                     behavior: "smooth",
                     block: "center"
                 });
+                isSavingAdminBooking = false;
+                saveBookingBtn.disabled = false;
+                saveBookingBtn.textContent = "Save Booking";
                 return;
             }
 
-            const activeBookings = await getActiveBookings();
+            let activeBookings;
+
+            try {
+                activeBookings = await getActiveBookings();
+            } catch (error) {
+                console.error("Unable to check booking availability:", error);
+
+                const errorElement = document.getElementById("addBookingError");
+
+                if (errorElement) {
+                    errorElement.textContent =
+                        "Unable to check booking availability. Please try again. " +
+                        (error.message || String(error));
+                    errorElement.style.display = "block";
+                }
+
+                document.getElementById("addBookingError")?.scrollIntoView({
+                    behavior: "smooth",
+                    block: "center"
+                });
+
+                isSavingAdminBooking = false;
+
+                saveBookingBtn.disabled = false;
+
+                saveBookingBtn.textContent = "Save Booking";
+                return;
+            }
 
             const checkin = document.getElementById("addCheckin")?.value || "";
             const checkout = document.getElementById("addCheckout")?.value || "";
@@ -1299,6 +1912,11 @@ updateAdminTotalGuests();
                     block: "center"
                 });
 
+                isSavingAdminBooking = false;
+
+                saveBookingBtn.disabled = false;
+
+                saveBookingBtn.textContent = "Save Booking";
                 return;
             }
 
@@ -1364,6 +1982,152 @@ updateAdminTotalGuests();
             const depositAmountLkr = bookingCurrency === "LKR" ? depositAmount : depositAmount * exchangeRate;
             const balanceAmountLkr = bookingCurrency === "LKR" ? balanceAmount : balanceAmount * exchangeRate;
 
+            const depositPaymentStatus =
+                document.getElementById("addDepositPaymentStatus")?.value ||
+                "Not Paid";
+
+            const depositPaymentCurrency =
+                document.getElementById("addDepositPaymentCurrency")?.value ||
+                "";
+
+            const depositPaymentAmount =
+                Number(
+                    document.getElementById("addDepositPaymentAmount")?.value
+                ) || 0;
+
+            const depositPaymentDate =
+                document.getElementById("addDepositPaymentDate")?.value ||
+                "";
+
+            const depositPaymentExchangeRateToLkr =
+                depositPaymentCurrency === "LKR"
+                    ? 1
+                    : Number(
+                        document.getElementById(
+                            "addDepositPaymentExchangeRate"
+                        )?.value
+                    ) || 0;
+
+            const depositPaymentAmountLkr =
+                depositPaymentCurrency === "LKR"
+                    ? depositPaymentAmount
+                    : depositPaymentAmount *
+                      depositPaymentExchangeRateToLkr;
+
+            const balancePaymentStatus =
+                document.getElementById("addBalancePaymentStatus")?.value ||
+                "Not Paid";
+
+            const balancePaymentCurrency =
+                document.getElementById("addBalancePaymentCurrency")?.value ||
+                "";
+
+            const balancePaymentAmount =
+                Number(
+                    document.getElementById("addBalancePaymentAmount")?.value
+                ) || 0;
+
+            const balancePaymentDate =
+                document.getElementById("addBalancePaymentDate")?.value ||
+                "";
+
+            const balancePaymentExchangeRateToLkr =
+                balancePaymentCurrency === "LKR"
+                    ? 1
+                    : Number(
+                        document.getElementById(
+                            "addBalancePaymentExchangeRate"
+                        )?.value
+                    ) || 0;
+
+            const balancePaymentAmountLkr =
+                balancePaymentCurrency === "LKR"
+                    ? balancePaymentAmount
+                    : balancePaymentAmount *
+                      balancePaymentExchangeRateToLkr;
+
+            const addPaymentError =
+                document.getElementById("addBookingError");
+
+            const validateActualPayment = (
+                paymentName,
+                status,
+                currency,
+                amount,
+                paymentDate,
+                exchangeRate
+            ) => {
+                if (status !== "Paid") {
+                    return true;
+                }
+
+                if (!currency) {
+                    if (addPaymentError) {
+                        addPaymentError.textContent =
+                            `${paymentName} currency is required when the payment status is Paid.`;
+                        addPaymentError.style.display = "block";
+                    }
+                    return false;
+                }
+
+                if (amount <= 0) {
+                    if (addPaymentError) {
+                        addPaymentError.textContent =
+                            `${paymentName} amount must be greater than zero.`;
+                        addPaymentError.style.display = "block";
+                    }
+                    return false;
+                }
+
+                if (!paymentDate) {
+                    if (addPaymentError) {
+                        addPaymentError.textContent =
+                            `${paymentName} date is required.`;
+                        addPaymentError.style.display = "block";
+                    }
+                    return false;
+                }
+
+                if (currency !== "LKR" && exchangeRate <= 0) {
+                    if (addPaymentError) {
+                        addPaymentError.textContent =
+                            `${paymentName} exchange rate to LKR is required for ${currency} payments.`;
+                        addPaymentError.style.display = "block";
+                    }
+                    return false;
+                }
+
+                return true;
+            };
+
+            if (
+                !validateActualPayment(
+                    "Deposit payment",
+                    depositPaymentStatus,
+                    depositPaymentCurrency,
+                    depositPaymentAmount,
+                    depositPaymentDate,
+                    depositPaymentExchangeRateToLkr
+                ) ||
+                !validateActualPayment(
+                    "Balance payment",
+                    balancePaymentStatus,
+                    balancePaymentCurrency,
+                    balancePaymentAmount,
+                    balancePaymentDate,
+                    balancePaymentExchangeRateToLkr
+                )
+            ) {
+                addPaymentError?.scrollIntoView({
+                    behavior: "smooth",
+                    block: "center"
+                });
+                isSavingAdminBooking = false;
+                saveBookingBtn.disabled = false;
+                saveBookingBtn.textContent = "Save Booking";
+                return;
+            }
+
             const bookingData = {
                 bookingReference,
 
@@ -1419,14 +2183,34 @@ updateAdminTotalGuests();
                     Number(CONFIG.payment.balanceGracePeriodHours) || 48,
 
                 paymentStatus:
-                    document.getElementById("addPaymentStatus")?.value ||
-                    "Deposit Required",
+                    depositPaymentStatus === "Paid" &&
+                    balancePaymentStatus === "Paid"
+                        ? "Paid"
+                        : depositPaymentStatus === "Paid"
+                            ? "Deposit Paid"
+                            : balancePaymentStatus === "Paid"
+                                ? "Balance Due"
+                                : "Deposit Required",
 
                 depositPaid:
-                    ["Deposit Paid", "Paid"].includes(document.getElementById("addPaymentStatus")?.value),
+                    depositPaymentStatus === "Paid",
 
                 balancePaid:
-                    document.getElementById("addPaymentStatus")?.value === "Paid",
+                    balancePaymentStatus === "Paid",
+
+                depositPaymentStatus,
+                depositPaymentAmount,
+                depositPaymentCurrency,
+                depositPaymentDate,
+                depositPaymentExchangeRateToLkr,
+                depositPaymentAmountLkr,
+
+                balancePaymentStatus,
+                balancePaymentAmount,
+                balancePaymentCurrency,
+                balancePaymentDate,
+                balancePaymentExchangeRateToLkr,
+                balancePaymentAmountLkr,
 
                 status:
                     document.getElementById("addBookingStatus")?.value ||
@@ -1441,9 +2225,7 @@ updateAdminTotalGuests();
             };
 
             try {
-                saveBookingBtn.disabled = true;
                 saveBookingBtn.textContent = "Saving...";
-
                 const docRef =
                     await db
                         .collection(CONFIG.firestore.bookingsCollection)
@@ -1492,6 +2274,7 @@ updateAdminTotalGuests();
                     });
 
             } finally {
+                isSavingAdminBooking = false;
                 saveBookingBtn.disabled = false;
                 saveBookingBtn.textContent = "Save Booking";
             }
@@ -1550,3 +2333,4 @@ updateAdminTotalGuests();
             );
     };
 
+})();
