@@ -1,0 +1,31 @@
+name: Deploy Ja-Ela Villa TEST Hosting
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - feat/booking-payment-status-currency
+
+permissions:
+  contents: read
+
+concurrency:
+  group: jaela-villa-test-hosting
+  cancel-in-progress: false
+
+jobs:
+  deploy-test:
+    name: Deploy to Firebase TEST Hosting
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Deploy TEST Hosting
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: '${{ secrets.GITHUB_TOKEN }}'
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_JA_ELA_SERENITY_VILLA_TEST }}'
+          projectId: ja-ela-serenity-villa-test
+          channelId: live
