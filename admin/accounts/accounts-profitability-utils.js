@@ -87,15 +87,65 @@
     }
 
     function getBookingLkrAmount(booking, field) {
-        const currency = String(booking.currency || "AUD").toUpperCase();
+        const currency = String(booking.currency || "AUD").trim().toUpperCase();
         const amount = number(booking[field]);
 
-        if (currency === "LKR") {
+        if (currency === "LKR" || amount === 0) {
             return amount;
         }
 
-        const exchangeRate = Number(booking.exchangeRateToLkr) || 0;
-        return amount * exchangeRate;
+        const exchangeRate = Number(booking.exchangeRateToLkr);
+
+        if (!Number.isFinite(exchangeRate) || exchangeRate <= 0) {
+            const reference = booking.bookingReference || booking.id || "unknown";
+            throw new Error(
+                `Booking ${reference} is in ${currency} but has no valid exchange rate to LKR.`
+            );
+        }
+
+        return Number((amount * exchangeRate).toFixed(2));
+    }
+
+    function getRecordLkrAmount(record, recordType) {
+        const currency = String(record.currency || "AUD").trim().toUpperCase();
+        const amount = number(record.amount);
+
+        if (currency === "LKR" || amount === 0) {
+            return amount;
+        }
+
+        const storedAmountLkr = Number(record.amountLkr);
+        if (
+            record.amountLkr !== null &&
+            record.amountLkr !== undefined &&
+            record.amountLkr !== "" &&
+            Number.isFinite(storedAmountLkr) &&
+            storedAmountLkr >= 0
+        ) {
+            return storedAmountLkr;
+        }
+
+        const exchangeRate = Number(record.exchangeRateToLkr);
+        if (!Number.isFinite(exchangeRate) || exchangeRate <= 0) {
+            const reference = record.reference || record.id || "unknown";
+            throw new Error(
+                `${recordType} ${reference} is in ${currency} but has no stored LKR amount or valid exchange rate. Update the record before running the report.`
+            );
+        }
+
+        return Number((amount * exchangeRate).toFixed(2));
+    }
+
+    function isDateWithinPeriod(value, periodFrom, periodTo) {
+        const date = parseDate(value);
+        if (!date) {
+            return false;
+        }
+
+        return (
+            date >= startOfDay(periodFrom) &&
+            date <= startOfDay(periodTo)
+        );
     }
 
     function bookingRevenue(booking, periodFrom, periodTo) {
@@ -120,30 +170,21 @@
                 periodTo
             );
 
-        const accommodation = getBookingLkrAmount(booking, "accommodation");
-
-        const extraGuestFee = getBookingLkrAmount(booking, "extraGuestFee");
-
-        const cleaningFee = getBookingLkrAmount(booking, "cleaningFee");
-
-        const nightlyStayRevenue =
-            accommodation + extraGuestFee;
-
-        const nightlyAllocation =
-            nightlyStayRevenue *
-            (overlapNights / totalNights);
+        const nightlyAllocation = overlapNights > 0
+            ? (
+                getBookingLkrAmount(booking, "accommodation") +
+                getBookingLkrAmount(booking, "extraGuestFee")
+            ) * (overlapNights / totalNights)
+            : 0;
 
         const cleaningRecognized =
             checkOut &&
             checkOut >= periodStart &&
             checkOut <= periodEnd
-                ? cleaningFee
+                ? getBookingLkrAmount(booking, "cleaningFee")
                 : 0;
 
-        return (
-            nightlyAllocation +
-            cleaningRecognized
-        );
+        return nightlyAllocation + cleaningRecognized;
     }
 
     function revenueBreakdown(bookings, periodFrom, periodTo) {
@@ -173,27 +214,24 @@
                     periodTo
                 );
 
-            const bookingAccommodation = getBookingLkrAmount(booking, "accommodation");
+            if (overlapNights > 0) {
+                const allocation =
+                    overlapNights / totalNights;
 
-            const bookingExtraGuestFee = getBookingLkrAmount(booking, "extraGuestFee");
+                accommodation +=
+                    getBookingLkrAmount(booking, "accommodation") * allocation;
 
-            const bookingCleaningFee = getBookingLkrAmount(booking, "cleaningFee");
-
-            const allocation =
-                overlapNights / totalNights;
-
-            accommodation +=
-                bookingAccommodation * allocation;
-
-            extraGuestFee +=
-                bookingExtraGuestFee * allocation;
+                extraGuestFee +=
+                    getBookingLkrAmount(booking, "extraGuestFee") * allocation;
+            }
 
             if (
                 checkOut &&
                 checkOut >= periodStart &&
                 checkOut <= periodEnd
             ) {
-                cleaningFee += bookingCleaningFee;
+                cleaningFee +=
+                    getBookingLkrAmount(booking, "cleaningFee");
             }
         });
 
@@ -271,17 +309,151 @@
         return total;
     }
 
-    function expenseTotal(expenses) {
-        return expenses
-            .filter(
-                expense =>
-                    (expense.status || ACTIVE) === ACTIVE
+    function getExpensesInPeriod(expenses, periodFrom, periodTo) {
+        return expenses.filter(expense =>
+            (expense.status || ACTIVE) === ACTIVE &&
+            isDateWithinPeriod(
+                expense.expenseDate,
+                periodFrom,
+                periodTo
             )
-            .reduce(
-                (sum, expense) =>
-                    sum + number(expense.amount),
-                0
-            );
+        );
+    }
+
+    function expenseBreakdown(expenses, periodFrom, periodTo) {
+        const totals = {};
+
+        getExpensesInPeriod(expenses, periodFrom, periodTo)
+            .forEach(expense => {
+                const type = expense.expenseType || "Other";
+                totals[type] = (totals[type] || 0) +
+                    getRecordLkrAmount(expense, "Expense");
+            });
+
+        return totals;
+    }
+
+    function expenseTotal(expenses, periodFrom, periodTo) {
+        return Object.values(
+            expenseBreakdown(expenses, periodFrom, periodTo)
+        ).reduce((sum, amount) => sum + amount, 0);
+    }
+
+    function utilityBreakdown(
+        utilityBills,
+        bookings,
+        periodFrom,
+        periodTo
+    ) {
+        const reportingStart = startOfDay(periodFrom);
+        const reportingEnd = startOfDay(periodTo);
+        const totals = {};
+
+        function add(allocationMethod, amount) {
+            totals[allocationMethod] =
+                (totals[allocationMethod] || 0) + amount;
+        }
+
+        utilityBills
+            .filter(bill => (bill.status || ACTIVE) === ACTIVE)
+            .forEach(bill => {
+                const allocationMethod =
+                    String(bill.allocationMethod || "None").trim();
+
+                // Property-level utility: recognise using the bill date.
+                if (allocationMethod === "None") {
+                    if (isDateWithinPeriod(
+                        bill.billDate,
+                        periodFrom,
+                        periodTo
+                    )) {
+                        add(
+                            allocationMethod,
+                            getRecordLkrAmount(bill, "Utility bill")
+                        );
+                    }
+                    return;
+                }
+
+                // Allocate a billing-period utility across occupied nights.
+                if (allocationMethod === "Occupied Nights") {
+                    const billingStart = parseDate(bill.billingPeriodFrom);
+                    const billingEnd = parseDate(bill.billingPeriodTo);
+
+                    if (
+                        !billingStart ||
+                        !billingEnd ||
+                        billingEnd < billingStart
+                    ) {
+                        return;
+                    }
+
+                    const totalOccupiedNights = occupiedNights(
+                        bookings,
+                        billingStart,
+                        billingEnd
+                    );
+
+                    if (totalOccupiedNights <= 0) {
+                        return;
+                    }
+
+                    const allocationStart = maxDate(
+                        billingStart,
+                        reportingStart
+                    );
+                    const allocationEnd = minDate(
+                        billingEnd,
+                        reportingEnd
+                    );
+
+                    if (allocationEnd < allocationStart) {
+                        return;
+                    }
+
+                    const reportingOccupiedNights = occupiedNights(
+                        bookings,
+                        allocationStart,
+                        allocationEnd
+                    );
+
+                    if (reportingOccupiedNights > 0) {
+                        add(
+                            allocationMethod,
+                            Number((
+                                getRecordLkrAmount(bill, "Utility bill") *
+                                reportingOccupiedNights /
+                                totalOccupiedNights
+                            ).toFixed(2))
+                        );
+                    }
+                    return;
+                }
+
+                // Direct-booking utility/costs are recognised once,
+                // in the reporting period containing the booking checkout.
+                if (allocationMethod === "Direct Booking") {
+                    const booking = bookings.find(item =>
+                        item.id === bill.bookingId
+                    );
+                    const checkOut = booking
+                        ? parseDate(booking.checkout)
+                        : null;
+
+                    if (
+                        checkOut &&
+                        checkOut >= reportingStart &&
+                        checkOut <= reportingEnd
+                    ) {
+                        add(
+                            allocationMethod,
+                            getRecordLkrAmount(bill, "Utility bill")
+                        );
+                    }
+                }
+            });
+
+        return totals;
     }
 
     function utilityTotal(
@@ -290,125 +462,14 @@
         periodFrom,
         periodTo
     ) {
-        const reportingStart = startOfDay(periodFrom);
-        const reportingEnd = startOfDay(periodTo);
-
-        return utilityBills
-            .filter(
-                bill =>
-                    (bill.status || ACTIVE) === ACTIVE
+        return Object.values(
+            utilityBreakdown(
+                utilityBills,
+                bookings,
+                periodFrom,
+                periodTo
             )
-            .reduce(
-                (sum, bill) => {
-                    const amount = number(bill.amount);
-                    const allocationMethod =
-                        String(
-                            bill.allocationMethod || "None"
-                        ).trim();
-
-                    // Property-level utility:
-                    // recognise the bill using its bill date.
-                    if (allocationMethod === "None") {
-                        const billDate =
-                            parseDate(bill.billDate);
-
-                        if (
-                            billDate &&
-                            billDate >= reportingStart &&
-                            billDate <= reportingEnd
-                        ) {
-                            return sum + amount;
-                        }
-
-                        return sum;
-                    }
-
-                    // Allocate the utility bill across occupied
-                    // nights within its billing period.
-                    if (
-                        allocationMethod ===
-                        "Occupied Nights"
-                    ) {
-                        const billingStart =
-                            parseDate(
-                                bill.billingPeriodFrom
-                            );
-
-                        const billingEnd =
-                            parseDate(
-                                bill.billingPeriodTo
-                            );
-
-                        if (
-                            !billingStart ||
-                            !billingEnd ||
-                            billingEnd < billingStart
-                        ) {
-                            return sum;
-                        }
-
-                        const totalOccupiedNights =
-                            occupiedNights(
-                                bookings,
-                                billingStart,
-                                billingEnd
-                            );
-
-                        if (totalOccupiedNights <= 0) {
-                            return sum;
-                        }
-
-                        const allocationStart =
-                            maxDate(
-                                billingStart,
-                                reportingStart
-                            );
-
-                        const allocationEnd =
-                            minDate(
-                                billingEnd,
-                                reportingEnd
-                            );
-
-                        if (
-                            allocationEnd <
-                            allocationStart
-                        ) {
-                            return sum;
-                        }
-
-                        const reportingOccupiedNights =
-                            occupiedNights(
-                                bookings,
-                                allocationStart,
-                                allocationEnd
-                            );
-
-                        return (
-                            sum +
-                            amount *
-                                (
-                                    reportingOccupiedNights /
-                                    totalOccupiedNights
-                                )
-                        );
-                    }
-
-                    // Direct Booking:
-                    // preserve the existing behaviour for a valid
-                    // booking-linked utility. A later test will
-                    // explicitly cover cross-period behaviour.
-                    if (
-                        allocationMethod ===
-                        "Direct Booking"
-                    ) {
-                        return sum + amount;
-                    }
-
-                    return sum;
-                },
-                0
-            );
+        ).reduce((sum, amount) => sum + amount, 0);
     }
 
     function calculateProfitability({
@@ -436,7 +497,7 @@
         );
 
         const expensesTotal =
-            expenseTotal(expenses);
+            expenseTotal(expenses, periodFrom, periodTo);
 
         const utilitiesTotal =
             utilityTotal(utilityBills, bookings, periodFrom, periodTo);
@@ -531,6 +592,13 @@
         bookingOverlapNights,
         periodCalendarNights,
         occupiedNights,
+        isDateWithinPeriod,
+        getRecordLkrAmount,
+        getExpensesInPeriod,
+        expenseBreakdown,
+        expenseTotal,
+        utilityBreakdown,
+        utilityTotal,
         calculateProfitability
     };
 
