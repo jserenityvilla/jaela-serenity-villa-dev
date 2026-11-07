@@ -472,9 +472,61 @@
             );
     }
 
+    function clearReportOutput() {
+        const outputIds = [
+            "revenue",
+            "expenses",
+            "utilities",
+            "netProfit",
+            "profitMargin",
+            "occupancy",
+            "confirmedBookings",
+            "bookedNights",
+            "calendarNights",
+            "profitPerNight",
+            "totalGuests",
+            "guestNights",
+            "revenuePerGuest",
+            "revenuePerGuestNight",
+            "accommodationRevenue",
+            "extraGuestRevenue",
+            "cleaningRevenue"
+        ];
+
+        outputIds.forEach(id => {
+            const element = $(id);
+            if (element) {
+                element.textContent = "—";
+            }
+        });
+
+        [
+            "bookingProfitabilityBody",
+            "expenseBreakdownBody",
+            "utilityBreakdownBody"
+        ].forEach(id => {
+            const element = $(id);
+            if (element) {
+                element.innerHTML = "";
+            }
+        });
+
+        [
+            "expenseEmpty",
+            "utilityEmpty"
+        ].forEach(id => {
+            const element = $(id);
+            if (element) {
+                element.style.display = "none";
+            }
+        });
+    }
+
     async function refresh() {
         const statusMessage =
             $("statusMessage");
+
+        clearReportOutput();
 
         clearMessage(statusMessage);
 
@@ -568,6 +620,8 @@
                 "ACCT-004 profitability load failed:",
                 error
             );
+
+            clearReportOutput();
 
             showMessage(
                 statusMessage,
