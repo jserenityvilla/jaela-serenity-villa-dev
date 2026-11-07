@@ -538,7 +538,12 @@
         const confirmedBookings =
             bookings.filter(
                 booking =>
-                    booking.status === CONFIRMED
+                    booking.status === CONFIRMED &&
+                    bookingOverlapNights(
+                        booking,
+                        periodFrom,
+                        periodTo
+                    ) > 0
             );
 
         const guestCount =

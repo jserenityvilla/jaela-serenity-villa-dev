@@ -295,6 +295,33 @@ test("complete profitability calculation returns consistent LKR totals", () => {
     assert.equal(result.calendarNights, 3);
 });
 
+test("confirmed booking and guest metrics include only stays overlapping the selected period", () => {
+    const outsideBooking = {
+        ...booking,
+        id: "B-OUTSIDE",
+        bookingReference: "B-OUTSIDE",
+        checkin: "2026-02-01",
+        checkout: "2026-02-03",
+        nights: 2,
+        totalGuests: 4,
+        adults: 4,
+        children: 0
+    };
+
+    const result = utils.calculateProfitability({
+        bookings: [booking, outsideBooking],
+        expenses: [],
+        utilityBills: [],
+        periodFrom,
+        periodTo
+    });
+
+    assert.equal(result.confirmedBookings, 1);
+    assert.equal(result.totalGuests, 2);
+    assert.equal(result.guestNights, 4);
+    assert.equal(result.revenue, 44000);
+});
+
 test("out-of-period AUD records do not block the current report", () => {
     const outsideBooking = {
         id: "B-OUT",
