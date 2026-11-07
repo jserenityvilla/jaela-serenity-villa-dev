@@ -413,27 +413,28 @@
                 )
                 .reduce(
                     (sum, booking) =>
-                        sum + number(booking.total),
+                        sum + getTotalLkr(booking),
                     0
                 );
+
         const deposits =
             bookings.reduce(
                 (sum, booking) =>
-                    sum + getDepositPaid(booking),
+                    sum + getDepositPaidLkr(booking),
                 0
             );
 
         const balances =
             bookings.reduce(
                 (sum, booking) =>
-                    sum + getBalancePaid(booking),
+                    sum + getBalancePaidLkr(booking),
                 0
             );
 
         const outstanding =
             bookings.reduce(
                 (sum, booking) =>
-                    sum + getOutstanding(booking),
+                    sum + getOutstandingLkr(booking),
                 0
             );
 
@@ -447,19 +448,19 @@
 
         document.getElementById(
             "summaryRevenue"
-        ).textContent = money(revenue);
+        ).textContent = money(revenue, "LKR");
 
         document.getElementById(
             "summaryDeposits"
-        ).textContent = money(deposits);
+        ).textContent = money(deposits, "LKR");
 
         document.getElementById(
             "summaryBalances"
-        ).textContent = money(balances);
+        ).textContent = money(balances, "LKR");
 
         document.getElementById(
             "summaryOutstanding"
-        ).textContent = money(outstanding);
+        ).textContent = money(outstanding, "LKR");
     };
 
     const showEditBooking = (booking) => {
