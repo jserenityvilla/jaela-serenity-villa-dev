@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Linen & Laundry Management | Ja-Ela Serenity Villa</title>
+
+    <link rel="stylesheet" href="../../assets/css/style-new.css">
+    <link rel="stylesheet" href="../../assets/css/admin.css">
+    <link rel="stylesheet" href="../../assets/css/responsive.css">
+
+    <style>
+        .housekeeping-container {
+            max-width: 1100px;
+            margin: 45px auto;
+            padding: 0 25px;
+        }
+
+        .housekeeping-header {
+            margin-bottom: 30px;
+        }
+
+        .housekeeping-header h1 {
+            font-size: 30px;
+            margin-bottom: 8px;
+        }
+
+        .housekeeping-header p {
+            color: #666;
+        }
+
+        .module-status {
+            padding: 25px;
+            background: #f5f8f6;
+            border: 1px solid #dce9df;
+            border-radius: 12px;
+            margin-bottom: 25px;
+        }
+
+        .module-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .module-card {
+            padding: 22px;
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+        }
+
+        .module-card h2 {
+            font-size: 19px;
+        }
+
+        .module-card p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 30px;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        @media (max-width: 600px) {
+            .module-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body data-admin-login-path="../login.html"
+      style="visibility:hidden;">
+
+<header>
+    <h1>Ja-Ela Serenity Villa</h1>
+</header>
+
+<main class="housekeeping-container">
+
+    <section class="housekeeping-header">
+        <h1>Linen &amp; Laundry Management</h1>
+        <p>
+            Housekeeping, room preparation,
+            linen inventory and laundry management.
+        </p>
+    </section>
+
+    <section class="module-status">
+        <h2>Module Foundation</h2>
+        <p>
+            The Housekeeping module has been established.
+            Functional modules will be introduced progressively
+            through the approved DEV, TEST and PROD process.
+        </p>
+    </section>
+
+    <section class="module-grid">
+
+        <article class="module-card">
+            <h2>Room Preparation</h2>
+            <p>
+                Prepare guest bedrooms and bathrooms
+                using predefined linen and towel packs.
+            </p>
+        </article>
+
+        <article class="module-card">
+            <h2>Stock Management</h2>
+            <p>
+                Maintain available, allocated,
+                in-use and laundry stock.
+            </p>
+        </article>
+
+        <article class="module-card">
+            <h2>Housekeeping Staff</h2>
+            <p>
+                Manage staff assignments and
+                preparation responsibilities.
+            </p>
+        </article>
+
+        <article class="module-card">
+            <h2>Laundry Management</h2>
+            <p>
+                Track laundry dispatches,
+                returns and outstanding quantities.
+            </p>
+        </article>
+
+    </section>
+
+    <a class="back-link" href="../index.html">
+        ← Back to Admin Portal
+    </a>
+
+</main>
+
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore-compat.js"></script>
+<script src="../../firebase/firebase-config.js"></script>
+<script src="../../assets/js/admin-auth-guard.js"></script>
+
+</body>
+</html>
