@@ -543,7 +543,7 @@
             } =
                 getReportingPeriod();
 
-            const [
+            let [
                 bookings,
                 expenses,
                 utilityBills
@@ -558,6 +558,7 @@
                     "utilityBills"
                 )
             ]);
+            bookings = AccountsProfitabilityUtils.filterProfitabilityBookings(bookings);
 
             const result =
                 AccountsProfitabilityUtils
