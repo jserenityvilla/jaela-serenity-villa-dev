@@ -2352,6 +2352,40 @@ updateAdminTotalGuests();
                     `Booking saved successfully.\n\nBooking Reference: ${bookingReference}`
                 );
 
+                // Reset only FX fields for the next new booking. A cancelled draft keeps its custom rates.
+                const nextBookingCurrency = document.getElementById("addBookingCurrency");
+                if (nextBookingCurrency) {
+                    nextBookingCurrency.dataset.previousCurrency = "";
+                }
+                setDefaultExchangeRate(
+                    "addBookingCurrency",
+                    "addExchangeRate",
+                    "addExchangeRateLabel"
+                );
+
+                const nextDepositCurrency =
+                    document.getElementById("addDepositPaymentCurrency");
+                if (nextDepositCurrency) {
+                    nextDepositCurrency.dataset.previousCurrency = "";
+                }
+                setDefaultExchangeRate(
+                    "addDepositPaymentCurrency",
+                    "addDepositPaymentExchangeRate"
+                );
+
+                const nextBalanceCurrency =
+                    document.getElementById("addBalancePaymentCurrency");
+                if (nextBalanceCurrency) {
+                    nextBalanceCurrency.dataset.previousCurrency = "";
+                }
+                setDefaultExchangeRate(
+                    "addBalancePaymentCurrency",
+                    "addBalancePaymentExchangeRate"
+                );
+
+                calculateAdminBookingPricing();
+                calculateAdminPaymentAmounts();
+
                 const panel =
                     document.getElementById("addBookingPanel");
 
