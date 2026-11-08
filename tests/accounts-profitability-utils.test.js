@@ -140,7 +140,7 @@ test("AUD expense without an LKR equivalent or exchange rate is rejected", () =>
     );
 });
 
-test("property utility bills are converted and filtered by bill date", () => {
+test("property utility bills without billing-period dates retain bill-date fallback", () => {
     const bills = [
         {
             id: "U-001",
@@ -166,6 +166,37 @@ test("property utility bills are converted and filtered by bill date", () => {
         utils.utilityTotal(bills, [booking], periodFrom, periodTo),
         2000
     );
+});
+
+test("property utility bills are prorated across inclusive billing-period days", () => {
+    const bill = {
+        id: "U-BILL-PERIOD",
+        status: "Active",
+        billDate: "2026-01-05",
+        billingPeriodFrom: "2026-01-02",
+        billingPeriodTo: "2026-01-05",
+        allocationMethod: "None",
+        amount: 4000,
+        currency: "LKR"
+    };
+
+    const firstPeriod = utils.utilityTotal(
+        [bill],
+        [],
+        date("2026-01-01"),
+        date("2026-01-03")
+    );
+
+    const secondPeriod = utils.utilityTotal(
+        [bill],
+        [],
+        date("2026-01-04"),
+        date("2026-01-05")
+    );
+
+    assert.equal(firstPeriod, 2000);
+    assert.equal(secondPeriod, 2000);
+    assert.equal(firstPeriod + secondPeriod, 4000);
 });
 
 test("occupied-night utility is allocated to the reporting-period slice", () => {
