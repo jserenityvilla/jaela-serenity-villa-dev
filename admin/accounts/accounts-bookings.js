@@ -4,12 +4,59 @@
     let db = null;
     let allBookings = [];
 
+    // Default reference rates for new bookings. The saved rate remains editable per booking.
+    const DEFAULT_EXCHANGE_RATES_TO_LKR = Object.freeze({
+        AUD: 225,
+        USD: 330
+    });
+
     const money = (value, currency = "AUD") => {
         const amount = Number(value) || 0;
         return `${currency} ${amount.toFixed(2)}`;
     };
 
     const number = (value) => Number(value) || 0;
+
+    function setDefaultExchangeRate(currencyElementId, rateElementId, labelElementId = null) {
+        const currencyElement = document.getElementById(currencyElementId);
+        const exchangeRateElement = document.getElementById(rateElementId);
+        const exchangeRateLabel = labelElementId
+            ? document.getElementById(labelElementId)
+            : null;
+
+        if (!currencyElement || !exchangeRateElement) {
+            return;
+        }
+
+        const currency = currencyElement.value || "";
+        const previousCurrency = currencyElement.dataset.previousCurrency || "";
+
+        if (!currency) {
+            if (previousCurrency) {
+                exchangeRateElement.value = "";
+            }
+            exchangeRateElement.disabled = false;
+        } else if (currency === "LKR") {
+            exchangeRateElement.value = "1";
+            exchangeRateElement.disabled = true;
+        } else {
+            if (!previousCurrency || previousCurrency !== currency) {
+                const defaultRate = DEFAULT_EXCHANGE_RATES_TO_LKR[currency];
+                exchangeRateElement.value = defaultRate
+                    ? String(defaultRate)
+                    : "";
+            }
+            exchangeRateElement.disabled = false;
+        }
+
+        if (exchangeRateLabel) {
+            exchangeRateLabel.textContent = currency === "LKR"
+                ? "Exchange Rate (not required for LKR)"
+                : `Exchange Rate (1 ${currency} = LKR)`;
+        }
+
+        currencyElement.dataset.previousCurrency = currency;
+    }
 
     const getGuestCount = (booking) => {
         const storedTotal = Number(booking.totalGuests);
@@ -1403,14 +1450,39 @@
         }
     });
 
-    ["addBookingCurrency", "addExchangeRate"].forEach(id => {
-        const element = document.getElementById(id);
-        if (element) {
-            element.addEventListener("input", calculateAdminBookingPricing);
-            element.addEventListener("change", calculateAdminBookingPricing);
-        }
-    });
+    const addBookingCurrencyElement =
+        document.getElementById("addBookingCurrency");
 
+    if (addBookingCurrencyElement) {
+        addBookingCurrencyElement.addEventListener("change", () => {
+            setDefaultExchangeRate(
+                "addBookingCurrency",
+                "addExchangeRate",
+                "addExchangeRateLabel"
+            );
+            calculateAdminBookingPricing();
+        });
+    }
+
+    const addExchangeRateElement =
+        document.getElementById("addExchangeRate");
+
+    if (addExchangeRateElement) {
+        addExchangeRateElement.addEventListener(
+            "input",
+            calculateAdminBookingPricing
+        );
+        addExchangeRateElement.addEventListener(
+            "change",
+            calculateAdminBookingPricing
+        );
+    }
+
+    setDefaultExchangeRate(
+        "addBookingCurrency",
+        "addExchangeRate",
+        "addExchangeRateLabel"
+    );
     calculateAdminBookingPricing();
 
     // ============================================
@@ -1468,10 +1540,8 @@
 
     [
         "addDepositPaymentAmount",
-        "addDepositPaymentCurrency",
         "addDepositPaymentExchangeRate",
         "addBalancePaymentAmount",
-        "addBalancePaymentCurrency",
         "addBalancePaymentExchangeRate"
     ].forEach(id => {
         const element = document.getElementById(id);
@@ -1489,6 +1559,28 @@
         }
     });
 
+    [
+        ["addDepositPaymentCurrency", "addDepositPaymentExchangeRate"],
+        ["addBalancePaymentCurrency", "addBalancePaymentExchangeRate"]
+    ].forEach(([currencyElementId, rateElementId]) => {
+        const element = document.getElementById(currencyElementId);
+
+        if (element) {
+            element.addEventListener("change", () => {
+                setDefaultExchangeRate(currencyElementId, rateElementId);
+                calculateAdminPaymentAmounts();
+            });
+        }
+    });
+
+    setDefaultExchangeRate(
+        "addDepositPaymentCurrency",
+        "addDepositPaymentExchangeRate"
+    );
+    setDefaultExchangeRate(
+        "addBalancePaymentCurrency",
+        "addBalancePaymentExchangeRate"
+    );
     calculateAdminPaymentAmounts();
 
     // ============================================
@@ -1978,6 +2070,25 @@ updateAdminTotalGuests();
             const bookingCurrency = document.getElementById("addBookingCurrency")?.value || CONFIG.pricing.currency;
             const exchangeRate = bookingCurrency === "LKR" ? 1 : Number(document.getElementById("addExchangeRate")?.value) || 0;
             const exchangeRateDate = document.getElementById("addExchangeRateDate")?.value || "";
+
+            if (bookingCurrency !== "LKR" && exchangeRate <= 0) {
+                const bookingError = document.getElementById("addBookingError");
+                if (bookingError) {
+                    bookingError.textContent =
+                        `A valid exchange rate for ${bookingCurrency} is required.`;
+                    bookingError.style.display = "block";
+                    bookingError.scrollIntoView({
+                        behavior: "smooth",
+                        block: "center"
+                    });
+                }
+
+                isSavingAdminBooking = false;
+                saveBookingBtn.disabled = false;
+                saveBookingBtn.textContent = "Save Booking";
+                return;
+            }
+
             const totalLkr = bookingCurrency === "LKR" ? total : total * exchangeRate;
             const depositAmountLkr = bookingCurrency === "LKR" ? depositAmount : depositAmount * exchangeRate;
             const balanceAmountLkr = bookingCurrency === "LKR" ? balanceAmount : balanceAmount * exchangeRate;
