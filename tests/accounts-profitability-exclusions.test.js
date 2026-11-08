@@ -87,3 +87,57 @@ test('returns an empty array when no bookings are supplied', () => {
         []
     );
 });
+
+test('excludes only expenses explicitly marked for exclusion', () => {
+    const flagged = {
+        id: 'test-expense',
+        excludeFromProfitability: true
+    };
+
+    const retained = {
+        id: 'normal-expense',
+        excludeFromProfitability: false
+    };
+
+    const noFlag = {
+        id: 'legacy-expense'
+    };
+
+    const result = utils.filterProfitabilityExpenses([
+        flagged,
+        retained,
+        noFlag
+    ]);
+
+    assert.deepStrictEqual(
+        Array.from(result),
+        [retained, noFlag]
+    );
+});
+
+test('does not modify the original expenses array', () => {
+    const expenses = [
+        {
+            id: 'excluded',
+            excludeFromProfitability: true
+        },
+        {
+            id: 'included'
+        }
+    ];
+
+    const result = utils.filterProfitabilityExpenses(expenses);
+
+    assert.equal(expenses.length, 2);
+    assert.equal(result.length, 1);
+    assert.equal(result[0].id, 'included');
+});
+
+test('returns an empty array when no expenses are supplied', () => {
+    const result = utils.filterProfitabilityExpenses();
+
+    assert.deepStrictEqual(
+        Array.from(result),
+        []
+    );
+});

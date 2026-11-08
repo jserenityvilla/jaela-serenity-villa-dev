@@ -559,6 +559,7 @@
                 )
             ]);
             bookings = AccountsProfitabilityUtils.filterProfitabilityBookings(bookings);
+            expenses = AccountsProfitabilityUtils.filterProfitabilityExpenses(expenses);
 
             const result =
                 AccountsProfitabilityUtils

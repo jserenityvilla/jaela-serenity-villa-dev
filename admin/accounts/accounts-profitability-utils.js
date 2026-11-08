@@ -599,6 +599,14 @@
         );
     }
 
+    function filterProfitabilityExpenses(expenses = []) {
+        return expenses.filter(
+            expense =>
+                expense &&
+                expense.excludeFromProfitability !== true
+        );
+    }
+
     global.AccountsProfitabilityUtils = {
         bookingRevenue,
         revenueBreakdown,
@@ -614,6 +622,7 @@
         utilityTotal,
         calculateProfitability,
         filterProfitabilityBookings,
+        filterProfitabilityExpenses,
     };
 
 })(typeof window !== "undefined" ? window : globalThis);
